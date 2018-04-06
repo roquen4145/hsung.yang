@@ -49,6 +49,7 @@
 		- 이미지에서 글자 인식 오픈소스 ( https://github.com/tesseract-ocr/tesseract )
 
 			Apache License 2.0
+			API examplie == https://github.com/tesseract-ocr/tesseract/wiki/APIExample 
 
 		- 머신러닝 ( https://bi.snu.ac.kr/Publications/Conferences/Domestic/KCC2016_BHKim.pdf )
 
