@@ -1,7 +1,9 @@
-#include <tesseract/baseapi.h>
+#include <api/baseapi.h>
 #include <leptonica/allheaders.h>
 
+
 int main()
+
 {
     char *outText;
 
