@@ -54,8 +54,9 @@
 		- 머신러닝 ( https://bi.snu.ac.kr/Publications/Conferences/Domestic/KCC2016_BHKim.pdf )
 
 	b. 적용가능 여부 판단
+		- Tesseract의 HOCR code 사용 ( HTML formatted OCR )
 
-	c. 기술 적용 혹은 직접 개발
+	c. 기술 적용 이후 추가 사항
 
 
 * 테스트 데이터 생성
