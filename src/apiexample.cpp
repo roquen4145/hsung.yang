@@ -1,4 +1,4 @@
-#include <api/baseapi.h>
+#include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
 
 
@@ -15,7 +15,7 @@ int main()
     }
 
     // Open input image with leptonica library
-    Pix *image = pixRead("/usr/src/tesseract/testing/phototest.tif");
+    Pix *image = pixRead("/test2.png");
     api->SetImage(image);
     // Get OCR result
     outText = api->GetUTF8Text();
