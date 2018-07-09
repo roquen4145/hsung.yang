@@ -68,9 +68,10 @@
 		- String 값에 대해 맞춤법 판단 기술 적용 및 자동 수정
 
 	d. 개발 순서
-		- Tesseract 한글 데이터 적용 ( 2018/07/05 )
-		- Tesseract HOCR 데이터 출력 확인 (Sample Image 생성 및 Sample Data 추출) ( 2018/07/08 )
-		- 이미지 영역별 분리 ( Paragraph, List 등) , 영역 별 Format 저장 ( 2018/07/09 )
+		- Tesseract 한글 데이터 적용 ( 2018/07/09 DONE )
+		- Tesseract Sample Image Generation and Extraction ( 2018/07/09 Processing )
+		- Tesseract HOCR 데이터 출력 확인 ( 2018/07/10 )
+		- 이미지 영역별 분리 ( Paragraph, List 등) , 영역 별 Format 저장 ( 2018/07/10 )
 		- Noise가 추가된 데이터에 대한 출력 확인
 		- 맞춤법 기술 적용 / 쉬운 적용방법 선택
 
@@ -85,3 +86,6 @@
 	b. 필기 데이터 
 
 ## 참고 자료
+
+OCR Programs
+http://gongboobub.tistory.com/8
