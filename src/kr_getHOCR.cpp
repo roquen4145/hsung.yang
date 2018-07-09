@@ -5,12 +5,22 @@
 #include <cstring>
 
 
-int main()
+int main(int argc,char *argv[])
 
 {
     char *outText;
     char tessdataPath[100] ="/home/roquen/repo/hsung.yang/reference";
-    char filename[11] = "kr_test_01";
+    char *filename;
+    if (argc > 1)
+    {
+        filename = (char*)malloc(sizeof(char)*( strlen(argv[1]) + 1 ));
+        strcpy(filename,argv[1]);
+    }
+    else
+    {
+        filename = (char*)malloc(sizeof(char)*11);
+        strcpy(filename,"kr_test_01");
+    }
     char *imagename = (char*) malloc(sizeof(char) * (strlen(filename)+ 4) );
     char *htmlname = (char*) malloc(sizeof(char) * (strlen(filename)+ 5) );
     strcpy(imagename,filename);
@@ -30,6 +40,7 @@ int main()
     // Open input image with leptonica library
     Pix *image = pixRead(imagename);
     api->SetImage(image);
+
     // Get OCR result
     outText = api->GetHOCRText(0);
     printf("OCR output:\n%s", outText);
