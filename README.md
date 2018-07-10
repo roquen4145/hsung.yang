@@ -89,3 +89,9 @@
 
 OCR Programs
 http://gongboobub.tistory.com/8
+
+문자라인, 단어개수 검출 방법
+https://wiki.studydev.com/pages/viewpage.action?pageId=11370546
+
+Image Enhancements
+https://stackoverflow.com/questions/9480013/image-processing-to-improve-tesseract-ocr-accuracy
