@@ -61,18 +61,30 @@
 		- Tesseract의 HOCR code 사용 ( HTML formatted OCR )
 
 	c. 기술 적용 순서 
+
 		- 이미지 전 처리 과정 ( Noise 제거 , 회전 , 배경색 제거 등)
+
 		- 이미지 Text 영역 분리 ( Paragraph , List 등으로 분리)
+
 		- Text의 각 영역별을 OCR로 데이터화
+
 		- Format에 맞춰 정렬
+
 		- String 값에 대해 맞춤법 판단 기술 적용 및 자동 수정
 
+
 	d. 개발 순서
+
 		- Tesseract 한글 데이터 적용 ( 2018/07/09 DONE )
+
 		- Tesseract Sample Image Generation and Extraction ( 2018/07/09 Processing )
+
 		- Tesseract HOCR 데이터 출력 확인 ( 2018/07/10 )
+
 		- 이미지 영역별 분리 ( Paragraph, List 등) , 영역 별 Format 저장 ( 2018/07/10 )
+
 		- Noise가 추가된 데이터에 대한 출력 확인
+		
 		- 맞춤법 기술 적용 / 쉬운 적용방법 선택
 
 
