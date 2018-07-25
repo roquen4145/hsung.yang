@@ -55,7 +55,8 @@
 
 	b. 적용가능 여부 판단
 		- Tesseract의 HOCR code 사용 ( HTML formatted OCR )
-
+			단순 Code 사용 방법
+			
 	c. 기술 적용 이후 추가 사항
 
 

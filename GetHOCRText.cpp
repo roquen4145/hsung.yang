@@ -7,6 +7,7 @@
  * STL removed from original patch submission and refactored by rays.
  * Returned string must be freed with the delete [] operator.
  */
+
 char* TessBaseAPI::GetHOCRText(ETEXT_DESC* monitor, int page_number) {
   if (tesseract_ == nullptr || (page_res_ == nullptr && Recognize(monitor) < 0))
     return nullptr;
@@ -120,6 +121,7 @@ char* TessBaseAPI::GetHOCRText(ETEXT_DESC* monitor, int page_number) {
       hocr_str += lang;
       hocr_str += "'";
     }
+
     switch (res_it->WordDirection()) {
       // Only emit direction if different from current paragraph direction
       case DIR_LEFT_TO_RIGHT:
@@ -133,6 +135,7 @@ char* TessBaseAPI::GetHOCRText(ETEXT_DESC* monitor, int page_number) {
       default:  // Do nothing.
         break;
     }
+
     hocr_str += ">";
     bool last_word_in_line = res_it->IsAtFinalElement(RIL_TEXTLINE, RIL_WORD);
     bool last_word_in_para = res_it->IsAtFinalElement(RIL_PARA, RIL_WORD);
@@ -151,6 +154,7 @@ char* TessBaseAPI::GetHOCRText(ETEXT_DESC* monitor, int page_number) {
     if (bold) hocr_str += "</strong>";
     hocr_str += "</span> ";
     wcnt++;
+    
     // Close any ending block/paragraph/textline.
     if (last_word_in_line) {
       hocr_str += "\n     </span>";
