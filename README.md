@@ -58,6 +58,7 @@
 		- 맞춤법 판단 및 자동수정
 
 	b. 적용가능 여부 판단
+	
 		- Tesseract의 HOCR code 사용 ( HTML formatted OCR )
 
 	c. 기술 적용 순서 
@@ -84,7 +85,7 @@
 		- 이미지 영역별 분리 ( Paragraph, List 등) , 영역 별 Format 저장 ( 2018/07/10 )
 
 		- Noise가 추가된 데이터에 대한 출력 확인
-		
+
 		- 맞춤법 기술 적용 / 쉬운 적용방법 선택
 
 
