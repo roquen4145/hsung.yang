@@ -109,3 +109,11 @@ https://wiki.studydev.com/pages/viewpage.action?pageId=11370546
 
 Image Enhancements
 https://stackoverflow.com/questions/9480013/image-processing-to-improve-tesseract-ocr-accuracy
+
+
+구글 API 안드로이드 코드 참조
+https://github.com/GoogleCloudPlatform/cloud-vision
+
+
+카메라 어플리케이션 만들기 참조
+http://jeongchul.tistory.com/287
