@@ -63,26 +63,48 @@
 
 	c. 기술 적용 순서 
 
-		- 이미지 전 처리 과정 ( Noise 제거 , 회전 , 배경색 제거 등)
+		ㄱ. 기존 방안
 
-		- 이미지 Text 영역 분리 ( Paragraph , List 등으로 분리)
+			- 이미지 전 처리 과정 ( Noise 제거 , 회전 , 배경색 제거 등)
 
-		- Text의 각 영역별을 OCR로 데이터화
+			- 이미지 Text 영역 분리 ( Paragraph , List 등으로 분리)
 
-		- Format에 맞춰 정렬
+			- Text의 각 영역별을 OCR로 데이터화
 
-		- String 값에 대해 맞춤법 판단 기술 적용 및 자동 수정
+			- Format에 맞춰 정렬
+
+			- String 값에 대해 맞춤법 판단 기술 적용 및 자동 수정
+
+
+		ㄴ. 이미지 재배열 방안 ( 전자 필기 앱으로 만들어진 PDF 파일 or 이미지 파일을 input으로 )
+
+			- 이미지 전 처리 과정
+
+			- 이미지 Text 영역 분리 ( Paragraph , Block , Word 등 )
+
+			- 영역별로 정렬
+
+			- 이미지 수정 방법 고안
+
 
 
 	d. 개발 순서
 
 		- Tesseract 한글 데이터 적용 ( 2018/07/09 DONE )
 
-		- Tesseract Sample Image Generation and Extraction ( 2018/07/09 Processing )
+		- Tesseract Sample Image Generation and Extraction ( 2018/07/09 Done , Replace to Google API )
 
-		- Tesseract HOCR 데이터 출력 확인 ( 2018/07/10 )
+		- Tesseract HOCR 데이터 출력 확인 ( 2018/07/10 Aborted )
 
-		- 이미지 영역별 분리 ( Paragraph, List 등) , 영역 별 Format 저장 ( 2018/07/10 )
+		- Google Vision API Test ( 2018/07/31 Done )
+
+		- 이미지 영역별 분리 ( Paragraph, List 등) , 영역 별 Format 저장 ( Supported by Google Vision API )
+
+		- 중간 점검 미팅 ( 2018/07/31 Done )
+
+		- 이미지 재배열 방식 구상 ( 2018/08/03 Processing )
+
+		- Google Vision API Test on HandWriting
 
 		- Noise가 추가된 데이터에 대한 출력 확인
 
