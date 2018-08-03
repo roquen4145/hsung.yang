@@ -35,9 +35,11 @@
 
 * 모바일 애플리케이션 개발
 
-  빠르고 쉬운 사용을 위해 모바일 어플리케이션을 개발한다.
+	빠르고 쉬운 사용을 위해 모바일 어플리케이션을 개발한다.
 
-* 
+* 문서 형식 보존
+
+	원래의 문서의 형태를 텍스트로 변환한 후에도 유지할 수 있도록 한다.
 
 
 ## 이슈
@@ -49,6 +51,7 @@
 		- 이미지에서 글자 인식 오픈소스 ( https://github.com/tesseract-ocr/tesseract )
 
 			Apache License 2.0
+
 			API examplie == https://github.com/tesseract-ocr/tesseract/wiki/APIExample 
 
 		- 머신러닝 ( https://bi.snu.ac.kr/Publications/Conferences/Domestic/KCC2016_BHKim.pdf )
@@ -62,6 +65,7 @@
 		- Tesseract의 HOCR code 사용 ( HTML formatted OCR )
 
 	c. 기술 적용 순서 
+
 
 		ㄱ. 기존 방안
 
@@ -117,25 +121,34 @@
 
 * 테스트 데이터 생성
 
+
 	a. 인쇄물
+
 
 	b. 필기 데이터 
 
+
 ## 참고 자료
 
+
 OCR Programs
+
 http://gongboobub.tistory.com/8
 
 문자라인, 단어개수 검출 방법
+
 https://wiki.studydev.com/pages/viewpage.action?pageId=11370546
 
 Image Enhancements
+
 https://stackoverflow.com/questions/9480013/image-processing-to-improve-tesseract-ocr-accuracy
 
 
 구글 API 안드로이드 코드 참조
+
 https://github.com/GoogleCloudPlatform/cloud-vision
 
 
 카메라 어플리케이션 만들기 참조
+
 http://jeongchul.tistory.com/287
