@@ -106,9 +106,11 @@
 
 		- 중간 점검 미팅 ( 2018/07/31 Done )
 
-		- 이미지 재배열 방식 구상 ( 2018/08/03 Processing )
+		- 이미지 재배열 방식 구상 ( 2018/08/03 Done )
 
-		- Google Vision API Test on HandWriting
+		- Google Vision API Test on HandWriting ( 2018/08/15 Done )
+
+		- OpenCV를 이용한 이미지 재배열 방식 뼈대 만들기 ( 2018/08/15 Processing )
 
 		- Noise가 추가된 데이터에 대한 출력 확인
 
