@@ -154,3 +154,8 @@ https://github.com/GoogleCloudPlatform/cloud-vision
 카메라 어플리케이션 만들기 참조
 
 http://jeongchul.tistory.com/287
+
+
+OpenCV on Android
+
+http://www.hellogohn.com/post_one271
