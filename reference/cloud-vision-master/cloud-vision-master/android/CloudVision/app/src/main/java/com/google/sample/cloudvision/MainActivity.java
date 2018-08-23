@@ -184,6 +184,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private Bitmap processImage(Bitmap orig_img)
+    {
+        return orig_img;
+    }
+
     private Vision.Images.Annotate prepareAnnotationRequest(Bitmap bitmap) throws IOException {
         HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
@@ -248,40 +253,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "created Cloud Vision request object, sending request");
 
         return annotateRequest;
-    }
-
-    private static class LableDetectionTask extends AsyncTask<Object, Void, String> {
-        private final WeakReference<MainActivity> mActivityWeakReference;
-        private Vision.Images.Annotate mRequest;
-
-        LableDetectionTask(MainActivity activity, Vision.Images.Annotate annotate) {
-            mActivityWeakReference = new WeakReference<>(activity);
-            mRequest = annotate;
-        }
-
-        @Override
-        protected String doInBackground(Object... params) {
-            try {
-                Log.d(TAG, "created Cloud Vision request object, sending request");
-                BatchAnnotateImagesResponse response = mRequest.execute();
-                return convertResponseToString(response);
-
-            } catch (GoogleJsonResponseException e) {
-                Log.d(TAG, "failed to make API request because " + e.getContent());
-            } catch (IOException e) {
-                Log.d(TAG, "failed to make API request because of other IOException " +
-                        e.getMessage());
-            }
-            return "Cloud Vision API request failed. Check logs for details.";
-        }
-
-        protected void onPostExecute(String result) {
-            MainActivity activity = mActivityWeakReference.get();
-            if (activity != null && !activity.isFinishing()) {
-                TextView imageDetail = activity.findViewById(R.id.image_details);
-                imageDetail.setText(result);
-            }
-        }
     }
 
     private static class DocumentTextDetectionTask extends AsyncTask<Object, Void, String> {
@@ -371,14 +342,14 @@ public class MainActivity extends AppCompatActivity {
                         for( Symbol symbol : word.getSymbols())
                         {
                             wordText = wordText + symbol.getText();
-                            message.append("Symbol text: " + symbol.getText() + " ( confidence: " + symbol.getConfidence().toString() + " ) \n\n");
+                            //message.append("Symbol text: " + symbol.getText() + " ( confidence: " + symbol.getConfidence().toString() + " ) \n\n");
                         }
 
-                        message.append("Word text : "+ wordText + " ( confidence : " + word.getConfidence() + " ) \n\n");
+                        //message.append("Word text : "+ wordText + " ( confidence : " + word.getConfidence() + " ) \n\n");
                         paraText = paraText + " " + wordText;
                     }
-                    message.append("\nParagraph: \n" + paraText);
-                    message.append("  Paragraph Confidence: "+ para.getConfidence().toString() + "\n");
+                    //message.append("\nParagraph: \n" + paraText);
+                    //message.append("  Paragraph Confidence: "+ para.getConfidence().toString() + "\n");
                     blockText = blockText + paraText;
                 }
                 pageText = pageText + blockText;
