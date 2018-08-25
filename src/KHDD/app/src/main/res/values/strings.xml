@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">KHDD</string>
+    <string name="dialog_select_prompt">사진 선택</string>
+    <string name="dialog_select_gallery">앨범</string>
+    <string name="dialog_select_camera">카메라</string>
 </resources>
