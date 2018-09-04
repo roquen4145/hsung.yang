@@ -34,6 +34,7 @@ import org.opencv.core.Mat;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private Mat matResult;
 
     private Uri mImageCaptureUri;
+    private String ImageFilePath;
     private TextView tv_Command;
     private ImageView iv_ToRead;
     private String absolutePath;
@@ -123,8 +125,28 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     public void startCamera(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mImageCaptureUri =FileProvider.getUriForFile(this,getPackageName(),photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,mImageCaptureUri);
         startActivityForResult(intent, CAMERA_IMAGE_REQUEST);
     };
+
+    private File createImageFile() throws IOException{
+        String fileName = "tmp_" + System.currentTimeMillis() ;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                fileName,
+                ".jpg",
+                storageDir
+        );
+        ImageFilePath = image.getAbsolutePath();
+        return image;
+    }
 
 
     @Override
@@ -140,23 +162,15 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             case GALLERY_IMAGE_REQUEST:
             {
                 mImageCaptureUri = data.getData();
-                Log.d("KHDD",mImageCaptureUri.getPath().toString());
+                Log.d("KHDD", mImageCaptureUri.getPath());
             }
             case CAMERA_IMAGE_REQUEST:
             {
                 Log.d("KHDD","In Camera Request");
-                mImageCaptureUri = data.getData();
-                iv_ToRead.setImageURI(data.getData());
-                Log.d("KHDD",data.getData().toString());
-//                Intent intent = new Intent("com.android.camera.action.CROP");
-//                intent.setDataAndType(mImageCaptureUri,"image/*");
-//                intent.putExtra("outputX",200);
-//                intent.putExtra("outputY",200);
-//                intent.putExtra("aspectX",1);
-//                intent.putExtra("aspectY",1);
-//                intent.putExtra("scale",true);
-//                intent.putExtra("return-data",true);
-//                startActivityForResult(intent,CROP_FROM_IMAGE);
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(mImageCaptureUri,"image/*");
+                intent.putExtra("return-data",true);
+                startActivityForResult(intent,CROP_FROM_IMAGE);
                 break;
             }
             case CROP_FROM_IMAGE:
