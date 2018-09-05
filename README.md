@@ -130,6 +130,21 @@
 	b. 필기 데이터 
 
 
+* 컴파일 에러
+
+	a. package android.hardware.camera2 is not exist
+
+		Open Module Settings > set 'Compile Sdk Version' over API25
+
+	b. ../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so', missing and no known rule to make it
+
+
+* 이미지 편집 불가
+
+	Editing is not supported for this Image.
+
+	File error accessing recents directory (directory doesn't exist?)
+
 ## 참고 자료
 
 

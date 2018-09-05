@@ -110,11 +110,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             }
         });
 
-        mOpenCvCameraView = (CameraBridgeViewBase)findViewById(R.id.activity_surface_view);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.setCameraIndex(0); // front-camera(1),  back-camera(0)
-        mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+//        mOpenCvCameraView = (CameraBridgeViewBase)findViewById(R.id.activity_surface_view);
+//        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+//        mOpenCvCameraView.setCvCameraViewListener(this);
+//        mOpenCvCameraView.setCameraIndex(0); // front-camera(1),  back-camera(0)
+//        mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
     }
 
     public void startGalleryChooser(){
@@ -182,7 +182,12 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 if(extras!=null)
                 {
                     Bitmap photo = extras.getParcelable("data");
+
+                    // Preprocessing the image
+
                     iv_ToRead.setImageBitmap(photo);
+
+                    // Call OCR
 
                     storeCropImage(photo,filePath);
                     absolutePath=filePath;
