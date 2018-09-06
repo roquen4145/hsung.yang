@@ -3,7 +3,11 @@ package com.gmail.roquen4145.khdd;
 
 import android.Manifest;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -35,6 +39,9 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
@@ -55,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private TextView tv_Command;
     private ImageView iv_ToRead;
     private String absolutePath;
+    private TextView tv_ImageDescription;
 
     public native void ConvertRGBtoGray(long matAddrInput, long matAddrResult);
 
@@ -77,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
         tv_Command = (TextView)findViewById(R.id.commandText);
         iv_ToRead = (ImageView)findViewById(R.id.imgToRead);
+        tv_ImageDescription = (TextView)findViewById(R.id.ImageDescription);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //퍼미션 상태 확인
@@ -125,22 +134,31 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     public void startCamera(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photoFile = null;
-        try {
-            photoFile = createImageFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        if(intent.resolveActivity(getPackageManager())!=null)
+        {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(photoFile != null)
+            {
+                mImageCaptureUri = FileProvider.getUriForFile(this,getPackageName(),photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                startActivityForResult(intent, CAMERA_IMAGE_REQUEST);
+            }
         }
-        mImageCaptureUri =FileProvider.getUriForFile(this,getPackageName(),photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,mImageCaptureUri);
-        startActivityForResult(intent, CAMERA_IMAGE_REQUEST);
     };
 
     private File createImageFile() throws IOException{
-        String fileName = "tmp_" + System.currentTimeMillis() ;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).format(new Date());
+        String imageFileName = "TEST_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                fileName,
+                imageFileName,
                 ".jpg",
                 storageDir
         );
@@ -162,15 +180,44 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             case GALLERY_IMAGE_REQUEST:
             {
                 mImageCaptureUri = data.getData();
-                Log.d("KHDD", mImageCaptureUri.getPath());
             }
             case CAMERA_IMAGE_REQUEST:
             {
-                Log.d("KHDD","In Camera Request");
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                intent.setDataAndType(mImageCaptureUri,"image/*");
-                intent.putExtra("return-data",true);
-                startActivityForResult(intent,CROP_FROM_IMAGE);
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),mImageCaptureUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ExifInterface exif = null;
+
+                try {
+                    exif = new ExifInterface(ImageFilePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                int exifOrientation;
+                int exifDegree;
+
+                if (exif != null)
+                {
+                    exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+                    exifDegree = exifOrientationToDegrees(exifOrientation);
+                }
+                else
+                    exifDegree =0;
+
+
+                iv_ToRead.setImageBitmap(rotate(bitmap,exifDegree));
+                tv_ImageDescription.setText(ImageFilePath);
+
+
+//                Log.d("KHDD","In Camera Request");
+//                Intent intent = new Intent("com.android.camera.action.CROP");
+//                intent.setDataAndType(mImageCaptureUri,"image/*");
+//                intent.putExtra("return-data",true);
+//                startActivityForResult(intent,CROP_FROM_IMAGE);
                 break;
             }
             case CROP_FROM_IMAGE:
@@ -201,6 +248,35 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 }
             }
         }
+    }
+
+    public String getPathFromUri(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToNext();
+        String path = cursor.getString(cursor.getColumnIndex("_data"));
+        cursor.close();
+        return path;
+    }
+
+
+
+    private int exifOrientationToDegrees(int exifOrientation)
+    {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
+            return 90;
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
+            return 180;
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
+            return 270;
+        else
+            return 0;
+    }
+
+    private Bitmap rotate(Bitmap bitmap ,float degree)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
     }
 
     private void storeCropImage(Bitmap bitmap,String filePath)
