@@ -183,41 +183,44 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             }
             case CAMERA_IMAGE_REQUEST:
             {
-                Bitmap bitmap = null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),mImageCaptureUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ExifInterface exif = null;
+//                Bitmap bitmap = null;
+//                try {
+//                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),mImageCaptureUri);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                ExifInterface exif = null;
+//
+//                try {
+//                    exif = new ExifInterface(ImageFilePath);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                int exifOrientation;
+//                int exifDegree;
+//
+//                if (exif != null)
+//                {
+//                    exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+//                    exifDegree = exifOrientationToDegrees(exifOrientation);
+//                }
+//                else
+//                    exifDegree =0;
+//
+//                bitmap = rotate(bitmap,exifDegree);
+//                iv_ToRead.setImageBitmap(bitmap);
+//                tv_ImageDescription.setText(ImageFilePath);
 
-                try {
-                    exif = new ExifInterface(ImageFilePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                int exifOrientation;
-                int exifDegree;
-
-                if (exif != null)
-                {
-                    exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
-                    exifDegree = exifOrientationToDegrees(exifOrientation);
-                }
-                else
-                    exifDegree =0;
 
 
-                iv_ToRead.setImageBitmap(rotate(bitmap,exifDegree));
-                tv_ImageDescription.setText(ImageFilePath);
-
-
-//                Log.d("KHDD","In Camera Request");
-//                Intent intent = new Intent("com.android.camera.action.CROP");
-//                intent.setDataAndType(mImageCaptureUri,"image/*");
-//                intent.putExtra("return-data",true);
-//                startActivityForResult(intent,CROP_FROM_IMAGE);
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(mImageCaptureUri,"image/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                intent.putExtra("return-data",true);
+                intent.putExtra("output",mImageCaptureUri);
+                startActivityForResult(intent,CROP_FROM_IMAGE);
                 break;
             }
             case CROP_FROM_IMAGE:
