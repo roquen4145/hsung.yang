@@ -20,6 +20,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        buildTypes.each {
+            it.buildConfigField 'String', 'API_KEY', '"AIzaSyAhFyIJbChazEv5evI9Whi5QyXIuv5ntFc"'
+        }
     }
     externalNativeBuild {
         cmake {
@@ -39,4 +42,7 @@ dependencies {
     implementation project(':openCVLibrary342')
 
     implementation 'com.github.yalantis:ucrop:2.2.2-native'
+    implementation 'com.google.apis:google-api-services-vision:v1-rev369-1.23.0'
+    implementation 'com.google.api-client:google-api-client-android:1.23.0' exclude module: 'httpclient'
+    implementation 'com.google.http-client:google-http-client-gson:1.23.0' exclude module: 'httpclient'
 }
