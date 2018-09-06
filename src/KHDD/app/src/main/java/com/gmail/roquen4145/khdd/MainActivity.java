@@ -23,6 +23,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -477,6 +478,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.ImageDescription);
                 imageDetail.setText(result);
+                imageDetail.setMovementMethod(new ScrollingMovementMethod());
             }
         }
     }
