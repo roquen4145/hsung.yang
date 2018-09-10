@@ -13,15 +13,29 @@ Java_com_gmail_roquen4145_khdd_MainActivity_stringFromJNI(
     std::string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
 }
+//extern "C"
+//JNIEXPORT void JNICALL
+//Java_com_gmail_roquen4145_khdd_MainActivity_ConvertRGBtoGray(JNIEnv *env, jobject instance,
+//                                                             jlong matAddrInput,
+//                                                             jlong matAddrResult) {
+//
+//    // TODO
+//    Mat &matInput = *(Mat *)matAddrInput;
+//    Mat &matResult = *(Mat *)matAddrResult;
+//
+//    cvtColor(matInput, matResult, CV_RGBA2GRAY);
+//}
+
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_gmail_roquen4145_khdd_MainActivity_ConvertRGBtoGray(JNIEnv *env, jobject instance,
-                                                             jlong matAddrInput,
-                                                             jlong matAddrResult) {
+Java_com_gmail_roquen4145_khdd_MainActivity_process(JNIEnv *env, jobject instance,
+                                                    jlong matAddrInput, jlong matAddrResult) {
 
     // TODO
+
     Mat &matInput = *(Mat *)matAddrInput;
     Mat &matResult = *(Mat *)matAddrResult;
 
     cvtColor(matInput, matResult, CV_RGBA2GRAY);
+
 }

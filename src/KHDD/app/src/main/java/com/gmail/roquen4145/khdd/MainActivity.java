@@ -38,6 +38,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private String absolutePath;
     private TextView tv_ImageDescription;
 
-    public native void ConvertRGBtoGray(long matAddrInput, long matAddrResult);
+    public native void process(long matAddrInput, long matAddrResult);
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -241,13 +242,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     exifDegree = exifOrientationToDegrees(exifOrientation);
                 }
                 else
-                    exifDegree =0;
+                    exifDegree = 0;
 
                 final Bitmap bitmapToProcess =rotate(bitmap,exifDegree);
-                iv_ToRead.setImageBitmap(bitmapToProcess);
-                tv_ImageDescription.setText(ImageFilePath);
-
-                uploadImage(bitmap);
+                uploadImage(bitmapToProcess);
 
 //                Intent intent = new Intent("com.android.camera.action.CROP");
 //                intent.setDataAndType(mImageCaptureUri,"image/*");
@@ -256,9 +254,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 //                intent.putExtra("return-data",true);
 //                intent.putExtra("output",mImageCaptureUri);
 //                startActivityForResult(intent,CROP_FROM_IMAGE);
-
-
-
 
                 break;
             }
@@ -375,10 +370,20 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     /*   Cloud Vision Code Starts Here     */
     public void uploadImage(Bitmap bitmap) {
-        callCloudVision(bitmap);
+        callCloudVision(processImage(bitmap));
     }
     private Bitmap processImage(Bitmap orig_img)
     {
+        matInput = new Mat();
+        matResult = new Mat();
+
+        Utils.bitmapToMat(orig_img,matInput);
+        process(matInput.getNativeObjAddr(),matResult.getNativeObjAddr());
+
+        Bitmap output_bitmap = Bitmap.createBitmap(orig_img.getWidth(),orig_img.getHeight(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(matResult,output_bitmap);
+
+        iv_ToRead.setImageBitmap(output_bitmap);
         return orig_img;
     }
 
@@ -558,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+
 
     @Override
     public void onCameraViewStarted(int width, int height) {
