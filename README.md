@@ -110,7 +110,21 @@
 
 		- Google Vision API Test on HandWriting ( 2018/08/15 Done )
 
-		- OpenCV를 이용한 이미지 재배열 방식 뼈대 만들기 ( 2018/08/15 Processing )
+		- OpenCV를 이용한 이미지 재배열 방식 뼈대 만들기 ( 2018/08/15 Delayed )
+
+		- OpenCV를 위한 새로운 프로젝트 생성 ( 2018/08/23 Done )
+
+		- OpenCV 기본 예제 파일 컴파일 ( 2018/09/03 Done )
+
+		- 사진 선택 및 파일 처리 ( 2018/09/05 Done )
+
+		- 사진 크롭 ( 2018/09/06 Delayed )
+
+		- 구글 클라우드 API 적용 ( 2018/09/06 Done )
+
+		- 인식된 텍스트 출력 방법 설정 : PDF 출력 ( 2018/09/11 Done )
+
+		- 저장장치 권한 문제 : ExifInterface ( 2018/09/12 Processing )
 
 		- Noise가 추가된 데이터에 대한 출력 확인
 
@@ -138,12 +152,18 @@
 
 	b. ../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so', missing and no known rule to make it
 
+		OpenCV 라이브러리 파일 복사 
+
 
 * 이미지 편집 불가
 
 	Editing is not supported for this Image.
 
 	File error accessing recents directory (directory doesn't exist?)
+
+	=> Intent.FLAG_GRANT_READ_URI_PERMISSION , Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
+* 
 
 ## 참고 자료
 
@@ -161,9 +181,12 @@ Image Enhancements
 https://stackoverflow.com/questions/9480013/image-processing-to-improve-tesseract-ocr-accuracy
 
 
-구글 API 안드로이드 코드 참조
+구글 API 안드로이드 코드 참조 / 문서
+
 
 https://github.com/GoogleCloudPlatform/cloud-vision
+
+https://cloud.google.com/vision/docs/ocr
 
 
 카메라 어플리케이션 만들기 참조
@@ -174,3 +197,7 @@ http://jeongchul.tistory.com/287
 OpenCV on Android
 
 http://www.hellogohn.com/post_one271
+
+
+iText로 PDF 파일 만들기
+http://blog.naver.com/PostView.nhn?blogId=dpdpwl75&logNo=221022542816&beginTime=0&jumpingVid=&from=search&redirect=Log&widgetTypeCall=true

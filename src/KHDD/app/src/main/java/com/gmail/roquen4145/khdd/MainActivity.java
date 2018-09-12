@@ -32,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.api.services.vision.v1.model.CropHint;
+import com.google.api.services.vision.v1.model.CropHintsAnnotation;
 import com.yalantis.ucrop.UCrop;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -71,6 +73,7 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private String ImageFilePath;
     private TextView tv_Command;
     private ImageView iv_ToRead;
+    private ImageView iv_Prep;
     private String absolutePath;
     private TextView tv_ImageDescription;
 
@@ -121,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         tv_Command = (TextView)findViewById(R.id.commandText);
         iv_ToRead = (ImageView)findViewById(R.id.imgToRead);
         tv_ImageDescription = (TextView)findViewById(R.id.ImageDescription);
+        iv_Prep = (ImageView)findViewById(R.id.imgPrep);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //퍼미션 상태 확인
@@ -370,6 +375,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     /*   Cloud Vision Code Starts Here     */
     public void uploadImage(Bitmap bitmap) {
+        tv_ImageDescription.setText(R.string.loading_message);
+        iv_ToRead.setImageBitmap(bitmap);
         callCloudVision(processImage(bitmap));
     }
     private Bitmap processImage(Bitmap orig_img)
@@ -383,8 +390,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         Bitmap output_bitmap = Bitmap.createBitmap(orig_img.getWidth(),orig_img.getHeight(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(matResult,output_bitmap);
 
-        iv_ToRead.setImageBitmap(output_bitmap);
-        return orig_img;
+        iv_Prep.setImageBitmap(output_bitmap);
+        return output_bitmap;
     }
 
     private Vision.Images.Annotate prepareAnnotationRequest(final Bitmap bitmap) throws IOException {
@@ -523,9 +530,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     private static String convertResponseToString(BatchAnnotateImagesResponse response) {
-        StringBuilder message = new StringBuilder("I found these things:\n\n");
+        StringBuilder message = new StringBuilder("이미지 처리 내용 \n\n");
 
         TextAnnotation annotation = response.getResponses().get(0).getFullTextAnnotation();
+
         for (Page page : annotation.getPages())
         {
             String pageText = "";
@@ -538,24 +546,24 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     for(Word word: para.getWords())
                     {
                         String wordText = "";
+                        message.append("Symbol text: ");
                         for( Symbol symbol : word.getSymbols())
                         {
                             wordText = wordText + symbol.getText();
-                            //message.append("Symbol text: " + symbol.getText() + " ( confidence: " + symbol.getConfidence().toString() + " ) \n\n");
+                            message.append( symbol.getText() +" ");
                         }
-
-                        //message.append("Word text : "+ wordText + " ( confidence : " + word.getConfidence() + " ) \n\n");
+                        message.append("\n");
+                        message.append("Word text : "+ wordText + "  \n\n");
                         paraText = paraText + " " + wordText;
                     }
-                    //message.append("\nParagraph: \n" + paraText);
-                    //message.append("  Paragraph Confidence: "+ para.getConfidence().toString() + "\n");
+                    message.append("\nParagraph: \n" + paraText + "\n\n\n");
                     blockText = blockText + paraText;
                 }
                 pageText = pageText + blockText;
             }
         }
 
-        message.append("\nComplete annotation: \n" + annotation.getText());
+        message.append("\n\n" + annotation.getText());
         return message.toString();
     }
 

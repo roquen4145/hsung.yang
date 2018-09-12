@@ -36,6 +36,12 @@
             android:layout_height="200dp"
             android:contentDescription="@string/ImageDescription" />
 
+        <ImageView
+            android:id="@+id/imgPrep"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:contentDescription="@string/ImagePreprocessed" />
+
         <TextView
             android:id="@+id/ImageDescription"
             android:layout_width="match_parent"
