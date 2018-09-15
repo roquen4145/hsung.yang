@@ -8,4 +8,6 @@
     <string name="image_picker_error">사진 선택 에러</string>
     <string name="loading_message">처리중..</string>
     <string name="ImagePreprocessed">Image Preprocessed</string>
+    <string name="btn_copy">텍스트 복사</string>
+    <string name="btn_pdf">PDF 만들기</string>
 </resources>

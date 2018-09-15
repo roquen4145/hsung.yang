@@ -2,6 +2,7 @@ package com.gmail.roquen4145.khdd;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.annotation.TargetApi;
@@ -28,12 +30,20 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.services.vision.v1.model.CropHint;
 import com.google.api.services.vision.v1.model.CropHintsAnnotation;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.yalantis.ucrop.UCrop;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -67,8 +77,10 @@ import com.google.api.services.vision.v1.model.Word;
 import java.io.ByteArrayOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,7 +92,7 @@ import java.util.Locale;
 
 
 
-public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class MainActivity extends AppCompatActivity  {
     private static final String CLOUD_VISION_API_KEY = BuildConfig.API_KEY;
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
@@ -102,6 +114,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private ImageView iv_Prep;
     private String absolutePath;
     private TextView tv_ImageDescription;
+    private Button btn_Copy;
+    private Button btn_PDF;
+    private String savePath;
+
+    private static TextAnnotation savedAnnot;
 
     public native void process(long matAddrInput, long matAddrResult);
 
@@ -126,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         iv_ToRead = (ImageView)findViewById(R.id.imgToRead);
         tv_ImageDescription = (TextView)findViewById(R.id.ImageDescription);
         iv_Prep = (ImageView)findViewById(R.id.imgPrep);
+        btn_Copy = (Button)findViewById(R.id.btn_copy);
+        btn_PDF = (Button)findViewById(R.id.btn_pdf);
+
+        savedAnnot = null;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //퍼미션 상태 확인
@@ -159,11 +180,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             }
         });
 
-//        mOpenCvCameraView = (CameraBridgeViewBase)findViewById(R.id.activity_surface_view);
-//        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-//        mOpenCvCameraView.setCvCameraViewListener(this);
-//        mOpenCvCameraView.setCameraIndex(0); // front-camera(1),  back-camera(0)
-//        mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
     }
 
     public void startGalleryChooser(){
@@ -250,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     exifDegree = 0;
 
                 final Bitmap bitmapToProcess =rotate(bitmap,exifDegree);
+                savedAnnot = null;
                 uploadImage(bitmapToProcess);
 
 //                Intent intent = new Intent("com.android.camera.action.CROP");
@@ -378,6 +395,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         tv_ImageDescription.setText(R.string.loading_message);
         iv_ToRead.setImageBitmap(bitmap);
         callCloudVision(processImage(bitmap));
+
+        savePath = Environment.getExternalStorageDirectory().getAbsolutePath() +"/KHDD";
     }
     private Bitmap processImage(Bitmap orig_img)
     {
@@ -463,10 +482,12 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private static class DocumentTextDetectionTask extends AsyncTask<Object, Void, String> {
         private final WeakReference<MainActivity> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
+        private String mSavePath;
 
-        DocumentTextDetectionTask(MainActivity activity, Vision.Images.Annotate annotate) {
+        DocumentTextDetectionTask(MainActivity activity, Vision.Images.Annotate annotate, String savePath) {
             mActivityWeakReference = new WeakReference<>(activity);
             mRequest = annotate;
+            mSavePath = savePath;
         }
 
         @Override
@@ -501,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
         // Do the real work in an async task, because we need to use the network anyway
         try {
-            AsyncTask<Object, Void, String> documentTextDetectionTask = new DocumentTextDetectionTask(this, prepareAnnotationRequest(bitmap));
+            AsyncTask<Object, Void, String> documentTextDetectionTask = new DocumentTextDetectionTask(this, prepareAnnotationRequest(bitmap), savePath);
             documentTextDetectionTask.execute();
         } catch (IOException e) {
             Log.d(TAG, "failed to make API request because of other IOException " +
@@ -533,7 +554,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         StringBuilder message = new StringBuilder("이미지 처리 내용 \n\n");
 
         TextAnnotation annotation = response.getResponses().get(0).getFullTextAnnotation();
-
+        savedAnnot = annotation;
         for (Page page : annotation.getPages())
         {
             String pageText = "";
@@ -572,21 +593,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
      * which is packaged with this application.
      */
 
-
-    @Override
-    public void onCameraViewStarted(int width, int height) {
-
-    }
-
-    @Override
-    public void onCameraViewStopped() {
-
-    }
-
-    @Override
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        return null;
-    }
 
     static final int PERMISSIONS_REQUEST_CODE = 1000;
     String[] PERMISSIONS  = {"android.permission.CAMERA"};
@@ -645,5 +651,33 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             }
         });
         builder.create().show();
+    }
+
+
+    public class FontGetter
+    {
+        Font getFont()
+        {
+            BaseFont baseFont = null;
+            try {
+                InputStream is = getResources().getAssets().open("fonts/malgun.ttf");
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+                baseFont = BaseFont.createFont("malgun.ttf",BaseFont.IDENTITY_H,true,false,buffer,null);
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            } catch (DocumentException e)
+            {
+                e.printStackTrace();
+            }
+
+            Font font =  new Font(baseFont , 12);
+
+            return font;
+        }
+
     }
 }
