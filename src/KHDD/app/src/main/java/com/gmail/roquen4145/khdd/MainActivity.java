@@ -2,6 +2,8 @@ package com.gmail.roquen4145.khdd;
 
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -180,6 +182,33 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+
+        btn_Copy.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                ClipboardManager cManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                String text = tv_ImageDescription.getText().toString();
+                if(text.length() == 0)
+                {
+                    Toast.makeText(getApplicationContext(),"복사할 내용이 없습니다.",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    ClipData clipData = ClipData.newPlainText("OCR",);
+                    cManager.setPrimaryClip(clipData);
+                    Toast.makeText(getApplicationContext(),"클립보드에 내용이 복사되었습니다.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btn_PDF.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
     }
 
     public void startGalleryChooser(){
