@@ -14,6 +14,8 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -203,10 +205,11 @@ public class MainActivity extends AppCompatActivity  {
         });
 
         btn_PDF.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(MainActivity.this,EditActivity.class);
+                intent.putExtra("Annot",savedAnnot);
+                intent.putExtra
             }
         });
     }

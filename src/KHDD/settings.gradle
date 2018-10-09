@@ -1,3 +1,2 @@
 include ':app'
 include ':openCVLibrary342'
-include ':cropImage'

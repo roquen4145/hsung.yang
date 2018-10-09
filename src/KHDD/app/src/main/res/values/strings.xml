@@ -10,4 +10,12 @@
     <string name="ImagePreprocessed">Image Preprocessed</string>
     <string name="btn_copy">텍스트 복사</string>
     <string name="btn_pdf">PDF 만들기</string>
+    <string name="btn_previous">이전</string>
+    <string name="btn_next">다음</string>
+    <string name="tv_edit_title">텍스트 편집</string>
+    <string name="tv_alignmenttext">텍스트 정렬</string>
+    <string name="btn_leftalign">왼쪽</string>
+    <string name="btn_centeralign">가운데</string>
+    <string name="btn_rightalign">오른쪽</string>
+    <string name="btn_save">저장</string>
 </resources>
