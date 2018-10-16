@@ -85,6 +85,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,6 +124,15 @@ public class MainActivity extends AppCompatActivity  {
     private String savePath;
 
     private static TextAnnotation savedAnnot;
+
+    public class AnnotClass implements Serializable
+    {
+        private static final long serialVersionUID = 1209L;
+
+        int numPara;
+
+    }
+
 
     public native void process(long matAddrInput, long matAddrResult);
 
