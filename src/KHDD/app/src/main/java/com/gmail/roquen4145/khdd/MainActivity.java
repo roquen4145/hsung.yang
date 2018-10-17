@@ -92,9 +92,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-
-
+import java.util.Vector;
 
 
 public class MainActivity extends AppCompatActivity  {
@@ -130,7 +128,11 @@ public class MainActivity extends AppCompatActivity  {
         private static final long serialVersionUID = 1209L;
 
         int numPara;
-
+        int para_align;
+        int para_padding;
+        Vector para_text;
+        Vector para_pos_x;
+        Vector para_text_size;
     }
 
 
