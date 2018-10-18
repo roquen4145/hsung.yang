@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class EditActivity extends AppCompatActivity {
@@ -19,9 +20,9 @@ public class EditActivity extends AppCompatActivity {
         public int numPara;
         public int para_align;
         public int para_padding;
-        public Vector para_text;
-        public Vector para_pos_x;
-        public Vector para_text_size;
+        public ArrayList<String> para_text;
+        public ArrayList<Integer> para_pos_x;
+        public ArrayList<Integer> para_text_size;
     }
 
 
@@ -43,7 +44,7 @@ public class EditActivity extends AppCompatActivity {
         Intent intent = getIntent();
         AnnotClass receivedAnnot = (AnnotClass) intent.getSerializableExtra("Annot");
 
-        tv_text.setText(receivedAnnot.para_text.elementAt(0).toString());
+        tv_text.setText(receivedAnnot.para_text.get(0));
 
     }
 

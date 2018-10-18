@@ -130,12 +130,12 @@ public class MainActivity extends AppCompatActivity  {
         public int numPara;
         public int para_align;
         public int para_padding;
-        public Vector para_text;
-        public Vector para_pos_x;
-        public Vector para_text_size;
+        public ArrayList<String> para_text;
+        public ArrayList<Integer> para_pos_x;
+        public ArrayList<Integer> para_text_size;
     }
 
-    AnnotClass savedAnnot = new AnnotClass();
+    AnnotClass savedAnnot;
 
     public native void process(long matAddrInput, long matAddrResult);
 
@@ -163,7 +163,8 @@ public class MainActivity extends AppCompatActivity  {
         btn_Copy = (Button)findViewById(R.id.btn_copy);
         btn_PDF = (Button)findViewById(R.id.btn_pdf);
 
-        savedAnnot = null;
+
+        savedAnnot = new AnnotClass();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //퍼미션 상태 확인
@@ -222,6 +223,7 @@ public class MainActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,EditActivity.class);
                 savedAnnot.numPara=1;
+                savedAnnot.para_text = new ArrayList<String>();
                 savedAnnot.para_text.add("Test String #1");
                 intent.putExtra("Annot",savedAnnot);
                 startActivity(intent);
@@ -558,6 +560,7 @@ public class MainActivity extends AppCompatActivity  {
                 TextView imageDetail = activity.findViewById(R.id.ImageDescription);
                 imageDetail.setText(result);
                 imageDetail.setMovementMethod(new ScrollingMovementMethod());
+
             }
         }
     }

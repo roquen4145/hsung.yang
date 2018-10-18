@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:background="#FFFFFF"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteX="113dp"
         tools:layout_editor_absoluteY="0dp">
 
         <TextView
@@ -46,12 +46,12 @@
             android:id="@+id/ImageDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scrollbars="vertical"
             android:text=""
             android:textColor="#000000"
-            android:textSize="13sp"
-            android:scrollbars="vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
+            android:textSize="13sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,17 +62,13 @@
                 android:id="@+id/btn_copy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_copy"
-                android:visibility="invisible"
-                />
+                android:text="@string/btn_copy" />
 
             <Button
                 android:id="@+id/btn_pdf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text = "@string/btn_pdf"
-                android:visibility="invisible"
-                />
+                android:text="@string/btn_pdf" />
         </LinearLayout>
 
 
