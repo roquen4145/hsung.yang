@@ -121,20 +121,21 @@ public class MainActivity extends AppCompatActivity  {
     private Button btn_PDF;
     private String savePath;
 
-    private static TextAnnotation savedAnnot;
+
 
     public class AnnotClass implements Serializable
     {
         private static final long serialVersionUID = 1209L;
 
-        int numPara;
-        int para_align;
-        int para_padding;
-        Vector para_text;
-        Vector para_pos_x;
-        Vector para_text_size;
+        public int numPara;
+        public int para_align;
+        public int para_padding;
+        public Vector para_text;
+        public Vector para_pos_x;
+        public Vector para_text_size;
     }
 
+    AnnotClass savedAnnot = new AnnotClass();
 
     public native void process(long matAddrInput, long matAddrResult);
 
@@ -220,8 +221,10 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,EditActivity.class);
+                savedAnnot.numPara=1;
+                savedAnnot.para_text.add("Test String #1");
                 intent.putExtra("Annot",savedAnnot);
-                intent.putExtra
+                startActivity(intent);
             }
         });
     }
@@ -310,7 +313,6 @@ public class MainActivity extends AppCompatActivity  {
                     exifDegree = 0;
 
                 final Bitmap bitmapToProcess =rotate(bitmap,exifDegree);
-                savedAnnot = null;
                 uploadImage(bitmapToProcess);
 
 //                Intent intent = new Intent("com.android.camera.action.CROP");
@@ -598,7 +600,7 @@ public class MainActivity extends AppCompatActivity  {
         StringBuilder message = new StringBuilder("이미지 처리 내용 \n\n");
 
         TextAnnotation annotation = response.getResponses().get(0).getFullTextAnnotation();
-        savedAnnot = annotation;
+
         for (Page page : annotation.getPages())
         {
             String pageText = "";
