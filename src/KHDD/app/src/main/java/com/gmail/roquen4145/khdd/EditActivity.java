@@ -13,17 +13,7 @@ import java.util.Vector;
 public class EditActivity extends AppCompatActivity {
 
 
-    public class AnnotClass implements Serializable
-    {
-        private static final long serialVersionUID = 1209L;
 
-        public int numPara;
-        public int para_align;
-        public int para_padding;
-        public ArrayList<String> para_text;
-        public ArrayList<Integer> para_pos_x;
-        public ArrayList<Integer> para_text_size;
-    }
 
 
     @Override
