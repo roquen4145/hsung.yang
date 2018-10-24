@@ -14,6 +14,10 @@ import java.util.Vector;
 
 public class EditActivity extends AppCompatActivity {
 
+    private static final int ALIGN_LEFT = 0;
+    private static final int ALIGN_CENTER = 1;
+    private static final int ALIGN_RIGHT = 2;
+
     private Integer currentPara;
 
     private Button btn_align_left;
@@ -24,6 +28,8 @@ public class EditActivity extends AppCompatActivity {
     private Button btn_preview;
     private Button btn_save;
     private Button btn_next;
+
+    private String currentText;
 
     private AnnotClass receivedAnnot;
 
@@ -49,7 +55,9 @@ public class EditActivity extends AppCompatActivity {
 
         currentPara = 0;
 
-        tv_text.setText(receivedAnnot.para_text.get(currentPara));
+        currentText = receivedAnnot.para_text.get(currentPara);
+
+        tv_text.setText(currentText);
 
         btn_preview.setOnClickListener(new View.OnClickListener(){
 
@@ -62,8 +70,19 @@ public class EditActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    currentPara-=1;
-                    tv_text.setText(receivedAnnot.para_text.get(currentPara));
+                    String editedText = tv_text.getText().toString();
+                    if(currentText.equals(editedText))
+                    {
+                        currentPara-=1;
+                        tv_text.setText(receivedAnnot.para_text.get(currentPara));
+                    }
+                    else
+                    {
+                        receivedAnnot.para_text.set(currentPara,editedText);
+                        currentPara-=1;
+                        tv_text.setText(receivedAnnot.para_text.get(currentPara));
+                    }
+
                 }
             }
         });
@@ -79,8 +98,18 @@ public class EditActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    currentPara+=1;
-                    tv_text.setText(receivedAnnot.para_text.get(currentPara));
+                    String editedText = tv_text.getText().toString();
+                    if(currentText.equals(editedText))
+                    {
+                        currentPara+=1;
+                        tv_text.setText(receivedAnnot.para_text.get(currentPara));
+                    }
+                    else
+                    {
+                        receivedAnnot.para_text.set(currentPara,editedText);
+                        currentPara+=1;
+                        tv_text.setText(receivedAnnot.para_text.get(currentPara));
+                    }
                 }
             }
         });
