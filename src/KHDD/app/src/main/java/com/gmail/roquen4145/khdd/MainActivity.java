@@ -48,7 +48,6 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.yalantis.ucrop.UCrop;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity  {
     private Button btn_PDF;
     private String savePath;
 
-
+    static private ArrayList<String> OrigText;
     AnnotClass savedAnnot;
 
     public native void process(long matAddrInput, long matAddrResult);
@@ -196,6 +195,10 @@ public class MainActivity extends AppCompatActivity  {
                 {
                     Toast.makeText(getApplicationContext(),"복사할 내용이 없습니다.",Toast.LENGTH_SHORT).show();
                 }
+                else if (text.startsWith("처리중"))
+                {
+                    Toast.makeText(getApplicationContext(),"텍스트를 추출 중입니다.",Toast.LENGTH_LONG).show();
+                }
                 else
                 {
                     ClipData clipData = ClipData.newPlainText("OCR",text);
@@ -209,8 +212,9 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,EditActivity.class);
-                savedAnnot.numPara=1;
-                savedAnnot.para_text.add("Test String #1");
+                savedAnnot.numPara= OrigText.size();
+                savedAnnot.para_text.addAll(OrigText);
+                savedAnnot.para_text = OrigText;
                 intent.putExtra("Annot",savedAnnot);
                 startActivity(intent);
             }
@@ -313,8 +317,8 @@ public class MainActivity extends AppCompatActivity  {
 
                 break;
             }
-            case UCrop.REQUEST_CROP:
-            {
+//            case UCrop.REQUEST_CROP:
+//            {
 //                final Uri resultUri = UCrop.getOutput(data);
 //                Bitmap bitmap = null;
 //                try {
@@ -349,7 +353,7 @@ public class MainActivity extends AppCompatActivity  {
 //                {
 //                    f.delete();
 //                }
-            }
+//            }
         }
     }
 
@@ -589,7 +593,7 @@ public class MainActivity extends AppCompatActivity  {
         StringBuilder message = new StringBuilder("이미지 처리 내용 \n\n");
 
         TextAnnotation annotation = response.getResponses().get(0).getFullTextAnnotation();
-
+        OrigText = new ArrayList<String>();
 
         for (Page page : annotation.getPages())
         {
@@ -603,18 +607,19 @@ public class MainActivity extends AppCompatActivity  {
                     for(Word word: para.getWords())
                     {
                         String wordText = "";
-                        message.append("Symbol text: ");
+                        //message.append("Symbol text: ");
                         for( Symbol symbol : word.getSymbols())
                         {
                             wordText = wordText + symbol.getText();
-                            message.append( symbol.getText() +" ");
+                            //message.append( symbol.getText() +" ");
                         }
                         message.append("\n");
-                        message.append("Word text : "+ wordText + "  \n\n");
+                        //message.append("Word text : "+ wordText + "  \n\n");
                         paraText = paraText + " " + wordText;
                     }
-                    message.append("\nParagraph: \n" + paraText + "\n\n\n");
+                    //message.append("\nParagraph: \n" + paraText + "\n\n\n");
                     blockText = blockText + paraText;
+                    OrigText.add(paraText);
                 }
                 pageText = pageText + blockText;
             }
