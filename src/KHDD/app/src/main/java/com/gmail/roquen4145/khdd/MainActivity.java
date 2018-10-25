@@ -213,8 +213,17 @@ public class MainActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,EditActivity.class);
                 savedAnnot.numPara= OrigText.size();
-                savedAnnot.para_text.addAll(OrigText);
-                savedAnnot.para_text = OrigText;
+                for(int i=0;i<OrigText.size();i++)
+                {
+                    ParaStruct temp = new ParaStruct();
+                    temp.para_align = 1;
+                    temp.para_padding = 0;
+                    temp.para_pos_x = 0;
+                    temp.para_text = OrigText.get(i);
+                    temp.para_text_size = 10;
+
+                    savedAnnot.Paras.add(temp);
+                }
                 intent.putExtra("Annot",savedAnnot);
                 startActivity(intent);
             }
@@ -549,6 +558,7 @@ public class MainActivity extends AppCompatActivity  {
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.ImageDescription);
                 imageDetail.setText(result);
+                imageDetail.scrollTo(0,0);
                 imageDetail.setMovementMethod(new ScrollingMovementMethod());
 
             }
@@ -613,7 +623,7 @@ public class MainActivity extends AppCompatActivity  {
                             wordText = wordText + symbol.getText();
                             //message.append( symbol.getText() +" ");
                         }
-                        message.append("\n");
+                        //message.append("\n");
                         //message.append("Word text : "+ wordText + "  \n\n");
                         paraText = paraText + " " + wordText;
                     }

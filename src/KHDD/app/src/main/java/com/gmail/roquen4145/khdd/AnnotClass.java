@@ -10,20 +10,13 @@ public class AnnotClass implements Serializable
 
 
     public int numPara;
-    public int para_align;
-    public int para_padding;
-    public ArrayList<String> para_text;
-    public ArrayList<Integer> para_pos_x;
-    public ArrayList<Integer> para_text_size;
+    public ArrayList<ParaStruct> Paras;
+
 
     public AnnotClass()
     {
         super();
         this.numPara = 0;
-        this.para_align = 0;
-        this.para_padding = 0;
-        this.para_text = new ArrayList<String>();
-        this.para_pos_x = new ArrayList<Integer>();
-        this.para_text_size = new ArrayList<Integer>();
+        this.Paras = new ArrayList<ParaStruct>();
     }
 }

@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="145dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
 
@@ -67,12 +67,13 @@
         <TextView
             android:id="@+id/ParagraphPreview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            />
 
-        <TextView
+        <EditText
             android:id="@+id/ParagraphText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
 
     </LinearLayout>
@@ -103,7 +104,17 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/btn_save"
-            android:visibility="invisible"/>
+            android:visibility="gone"
+            android:clickable="false"/>
+
+        <Button
+            android:id="@+id/DeleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/btn_delete"
+            android:visibility="visible"
+            android:clickable="false"/>
 
         <Button
             android:id="@+id/NextButton"
