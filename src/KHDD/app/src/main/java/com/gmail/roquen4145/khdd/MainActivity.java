@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity  {
             case GALLERY_IMAGE_REQUEST:
             {
                 mImageCaptureUri = data.getData();
-                ImageFilePath = getPathFromUri(mImageCaptureUri);
+                ImageFilePath = getRealPathFromURI(mImageCaptureUri);
             }
             case CAMERA_IMAGE_REQUEST:
             {
@@ -365,16 +365,6 @@ public class MainActivity extends AppCompatActivity  {
 //            }
         }
     }
-
-    public String getPathFromUri(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToNext();
-        String path = cursor.getString(cursor.getColumnIndex("_data"));
-        cursor.close();
-        return path;
-    }
-
-
 
     private int exifOrientationToDegrees(int exifOrientation)
     {
@@ -459,6 +449,18 @@ public class MainActivity extends AppCompatActivity  {
         iv_Prep.setImageBitmap(output_bitmap);
         return output_bitmap;
     }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        int column_index=0;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if(cursor.moveToFirst()){
+            column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        }
+
+        return cursor.getString(column_index);
+    }
+
 
     private Vision.Images.Annotate prepareAnnotationRequest(final Bitmap bitmap) throws IOException {
         HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
@@ -646,7 +648,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
     static final int PERMISSIONS_REQUEST_CODE = 1000;
-    String[] PERMISSIONS  = {"android.permission.CAMERA"};
+    String[] PERMISSIONS  = {"android.permission.CAMERA","android.permission.WRITE_EXTERNAL_STORAGE","android.permission.READ_EXTERNAL_STORAGE"};
 
 
     private boolean hasPermissions(String[] permissions) {
