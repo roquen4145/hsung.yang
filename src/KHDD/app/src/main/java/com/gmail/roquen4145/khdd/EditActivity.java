@@ -1,6 +1,8 @@
 package com.gmail.roquen4145.khdd;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -10,6 +12,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -124,6 +139,64 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+        btn_save.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+
+                Document document = new Document(PageSize.A4, 50, 50, 30, 40);
+                String Dirname = Environment.getExternalStorageDirectory().getAbsolutePath()+"/KHDD";
+                String filename = "TempPDFFile";
+                String fullname = Dirname + "/" +filename + ".pdf";
+                File pdfFile = new File(fullname);
+
+                try {
+                    PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                document.open();
+
+                for(int i=0;i<receivedAnnot.numPara;i++)
+                {
+                    ParaStruct temp = receivedAnnot.Paras.get(i);
+                    Font myFont = getFont(temp.para_text_size);
+                    Paragraph paragraph = new Paragraph(temp.para_text , myFont);
+                    switch(temp.para_align)
+                    {
+                        case ALIGN_LEFT:
+                            paragraph.setAlignment(Element.ALIGN_LEFT);
+                            break;
+                        case ALIGN_CENTER:
+                            paragraph.setAlignment(Element.ALIGN_CENTER);
+                            break;
+                        case ALIGN_RIGHT:
+                            paragraph.setAlignment(Element.ALIGN_RIGHT);
+                            break;
+                    }
+
+                    paragraph.setIndentationLeft(temp.para_padding);
+
+                    try {
+                        document.add(paragraph);
+                    } catch (DocumentException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                document.close();
+
+                String msg = "문서를 " + filename + ".pdf로 저장하였습니다.";
+                Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile((pdfFile))));
+                finish();
+            }
+        });
+
+
         btn_delete.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -235,4 +308,31 @@ public class EditActivity extends AppCompatActivity {
         SetParaAlign();
 
     }
+
+
+
+    Font getFont(int fontSize)
+    {
+        BaseFont baseFont = null;
+        try {
+            InputStream is = getResources().getAssets().open("malgun.ttf");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            baseFont = BaseFont.createFont("malgun.ttf",BaseFont.IDENTITY_H,true,false,buffer,null);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        } catch (DocumentException e)
+        {
+            e.printStackTrace();
+        }
+
+        Font font =  new Font(baseFont , fontSize);
+
+        return font;
+    }
+
 }
+

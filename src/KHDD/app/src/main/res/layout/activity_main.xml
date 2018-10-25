@@ -29,11 +29,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/commandText"
+            android:id="@+id/titleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="@string/command"
+            android:text="@string/title"
             android:textColor="#000000"
             android:textSize="15sp" />
 
@@ -49,6 +49,15 @@
             android:layout_height="200dp"
             android:contentDescription="@string/ImagePreprocessed"
             android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/commandText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor = "#000000"
+            android:textSize = "15sp"
+            android:text = "@string/command"/>
 
         <TextView
             android:id="@+id/ImageDescription"
@@ -77,13 +86,15 @@
             android:id="@+id/btn_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_copy" />
+            android:text="@string/btn_copy"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btn_pdf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_pdf" />
+            android:text="@string/btn_pdf"
+            android:visibility="gone"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floatingActionButton"

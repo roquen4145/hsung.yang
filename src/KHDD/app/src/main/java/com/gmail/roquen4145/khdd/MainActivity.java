@@ -100,17 +100,17 @@ public class MainActivity extends AppCompatActivity  {
 
     private Uri mImageCaptureUri;
     private String ImageFilePath;
-    private TextView tv_Command;
+    private TextView tv_Title;
     private ImageView iv_ToRead;
     private ImageView iv_Prep;
     private String absolutePath;
+    private TextView tv_command;
     private TextView tv_ImageDescription;
     private Button btn_Copy;
     private Button btn_PDF;
     private String savePath;
 
-    static private ArrayList<String> OrigText;
-    AnnotClass savedAnnot;
+    static AnnotClass savedAnnot;
 
     public native void process(long matAddrInput, long matAddrResult);
 
@@ -131,8 +131,9 @@ public class MainActivity extends AppCompatActivity  {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
 
-        tv_Command = (TextView)findViewById(R.id.commandText);
+        tv_Title = (TextView)findViewById(R.id.titleText);
         iv_ToRead = (ImageView)findViewById(R.id.imgToRead);
+        tv_command = (TextView)findViewById(R.id.commandText);
         tv_ImageDescription = (TextView)findViewById(R.id.ImageDescription);
         iv_Prep = (ImageView)findViewById(R.id.imgPrep);
         btn_Copy = (Button)findViewById(R.id.btn_copy);
@@ -153,6 +154,10 @@ public class MainActivity extends AppCompatActivity  {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+
+                btn_Copy.setVisibility(View.VISIBLE);
+                btn_PDF.setVisibility(View.VISIBLE);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder
                         .setMessage(R.string.dialog_select_prompt)
@@ -184,10 +189,6 @@ public class MainActivity extends AppCompatActivity  {
                 {
                     Toast.makeText(getApplicationContext(),"복사할 내용이 없습니다.",Toast.LENGTH_SHORT).show();
                 }
-                else if (text.startsWith("처리중"))
-                {
-                    Toast.makeText(getApplicationContext(),"텍스트를 추출 중입니다.",Toast.LENGTH_LONG).show();
-                }
                 else
                 {
                     ClipData clipData = ClipData.newPlainText("OCR",text);
@@ -201,18 +202,6 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,EditActivity.class);
-                savedAnnot.numPara= OrigText.size();
-                for(int i=0;i<OrigText.size();i++)
-                {
-                    ParaStruct temp = new ParaStruct();
-                    temp.para_align = 1;
-                    temp.para_padding = 0;
-                    temp.para_pos_x = 0;
-                    temp.para_text = OrigText.get(i);
-                    temp.para_text_size = 10;
-
-                    savedAnnot.Paras.add(temp);
-                }
                 intent.putExtra("Annot",savedAnnot);
                 startActivity(intent);
             }
@@ -345,7 +334,6 @@ public class MainActivity extends AppCompatActivity  {
 
     /*   Cloud Vision Code Starts Here     */
     public void uploadImage(Bitmap bitmap) {
-        tv_ImageDescription.setText(R.string.loading_message);
         iv_ToRead.setImageBitmap(bitmap);
         callCloudVision(processImage(bitmap));
 
@@ -475,6 +463,8 @@ public class MainActivity extends AppCompatActivity  {
             MainActivity activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.ImageDescription);
+                TextView command = activity.findViewById(R.id.commandText);
+                command.setText("이미지 처리 내용");
                 imageDetail.setText(result);
                 imageDetail.scrollTo(0,0);
                 imageDetail.setMovementMethod(new ScrollingMovementMethod());
@@ -485,7 +475,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private void callCloudVision(final Bitmap bitmap) {
         // Switch text to loading
-        tv_ImageDescription.setText(R.string.loading_message);
+        tv_command.setText(R.string.loading_message);
 
         // Do the real work in an async task, because we need to use the network anyway
         try {
@@ -518,10 +508,8 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private static String convertResponseToString(BatchAnnotateImagesResponse response) {
-        StringBuilder message = new StringBuilder("이미지 처리 내용 \n\n");
-
+        StringBuilder message = new StringBuilder();
         TextAnnotation annotation = response.getResponses().get(0).getFullTextAnnotation();
-        OrigText = new ArrayList<String>();
 
         for (Page page : annotation.getPages())
         {
@@ -531,6 +519,8 @@ public class MainActivity extends AppCompatActivity  {
                 String blockText = "";
                 for (Paragraph para : block.getParagraphs())
                 {
+                    savedAnnot.numPara+=1;
+
                     String paraText = "";
                     for(Word word: para.getWords())
                     {
@@ -547,7 +537,16 @@ public class MainActivity extends AppCompatActivity  {
                     }
                     //message.append("\nParagraph: \n" + paraText + "\n\n\n");
                     blockText = blockText + paraText;
-                    OrigText.add(paraText);
+
+                    ParaStruct temp = new ParaStruct();
+                    temp.para_align = 1;
+                    temp.para_padding = 0;
+                    temp.para_pos_x = para.getBoundingBox().getVertices().get(0).getX();
+                    temp.para_text = paraText;
+                    temp.para_text_size = 10;
+
+                    savedAnnot.Paras.add(temp);
+
                 }
                 pageText = pageText + blockText;
             }
