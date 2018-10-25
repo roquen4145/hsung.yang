@@ -252,6 +252,9 @@ public class MainActivity extends AppCompatActivity  {
             {
                 mImageCaptureUri = FileProvider.getUriForFile(this,getPackageName(),photoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                intent.putExtra("noFaceDetection",true); //
+                intent.putExtra( "crop", "true" );
+                intent.putExtra("scale", true);
                 startActivityForResult(intent, CAMERA_IMAGE_REQUEST);
             }
         }
@@ -281,6 +284,25 @@ public class MainActivity extends AppCompatActivity  {
 
         switch(requestCode)
         {
+            case CROP_FROM_IMAGE:
+
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),mImageCaptureUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                iv_ToRead.setImageBitmap(bitmap);
+
+                // 임시 파일 삭제
+                File f = new File(mImageCaptureUri.getPath());
+                if(f.exists())
+                {
+                    f.delete();
+                }
+                uploadImage(bitmap);
+
+                break;
             case GALLERY_IMAGE_REQUEST:
             {
                 mImageCaptureUri = data.getData();
@@ -288,81 +310,44 @@ public class MainActivity extends AppCompatActivity  {
             }
             case CAMERA_IMAGE_REQUEST:
             {
-                Bitmap bitmap = null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),mImageCaptureUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ExifInterface exif = null;
-
-                try {
-                    exif = new ExifInterface(ImageFilePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                int exifOrientation;
-                int exifDegree;
-
-                if (exif != null)
-                {
-                    exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
-                    exifDegree = exifOrientationToDegrees(exifOrientation);
-                }
-                else
-                    exifDegree = 0;
-
-                final Bitmap bitmapToProcess =rotate(bitmap,exifDegree);
-                uploadImage(bitmapToProcess);
-
-//                Intent intent = new Intent("com.android.camera.action.CROP");
-//                intent.setDataAndType(mImageCaptureUri,"image/*");
-//                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//                intent.putExtra("return-data",true);
-//                intent.putExtra("output",mImageCaptureUri);
-//                startActivityForResult(intent,CROP_FROM_IMAGE);
-
-                break;
-            }
-//            case UCrop.REQUEST_CROP:
-//            {
-//                final Uri resultUri = UCrop.getOutput(data);
 //                Bitmap bitmap = null;
 //                try {
-//                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),resultUri);
+//                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),mImageCaptureUri);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                ExifInterface exif = null;
+//
+//                try {
+//                    exif = new ExifInterface(ImageFilePath);
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                }
 //
-//                iv_ToRead.setImageBitmap(bitmap);
+//                int exifOrientation;
+//                int exifDegree;
+//
+//                if (exif != null)
+//                {
+//                    exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+//                    exifDegree = exifOrientationToDegrees(exifOrientation);
+//                }
+//                else
+//                    exifDegree = 0;
+//
+//                final Bitmap bitmapToProcess = rotate(bitmap,exifDegree);
+//                uploadImage(bitmapToProcess);
 
-//                final Bundle extras = data.getExtras();
-//
-//                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/KHDD"+System.currentTimeMillis()+".jpg";
-//
-//                if(extras!=null)
-//                {
-//                    Bitmap photo = extras.getParcelable("data");
-//
-//                    // Preprocessing the image
-//
-//                    iv_ToRead.setImageBitmap(photo);
-//
-//                    // Call OCR
-//
-//                    storeCropImage(photo,filePath);
-//                    absolutePath=filePath;
-//                    break;
-//                }
-//
-//                File f = new File(mImageCaptureUri.getPath());
-//                if(f.exists())
-//                {
-//                    f.delete();
-//                }
-//            }
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(mImageCaptureUri,"image/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                intent.putExtra("return-data",true);
+                intent.putExtra("output",mImageCaptureUri);
+                startActivityForResult(intent,CROP_FROM_IMAGE);
+
+                break;
+            }
         }
     }
 
