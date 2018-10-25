@@ -41,13 +41,6 @@ import android.widget.Toast;
 
 import com.google.api.services.vision.v1.model.CropHint;
 import com.google.api.services.vision.v1.model.CropHintsAnnotation;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfWriter;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -80,18 +73,14 @@ import com.google.api.services.vision.v1.model.Word;
 import java.io.ByteArrayOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 
 public class MainActivity extends AppCompatActivity  {
@@ -312,34 +301,6 @@ public class MainActivity extends AppCompatActivity  {
             }
             case CAMERA_IMAGE_REQUEST:
             {
-//                Bitmap bitmap = null;
-//                try {
-//                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),mImageCaptureUri);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                ExifInterface exif = null;
-//
-//                try {
-//                    exif = new ExifInterface(ImageFilePath);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                int exifOrientation;
-//                int exifDegree;
-//
-//                if (exif != null)
-//                {
-//                    exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
-//                    exifDegree = exifOrientationToDegrees(exifOrientation);
-//                }
-//                else
-//                    exifDegree = 0;
-//
-//                final Bitmap bitmapToProcess = rotate(bitmap,exifDegree);
-//                uploadImage(bitmapToProcess);
-
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(mImageCaptureUri,"image/*");
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -353,24 +314,7 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    private int exifOrientationToDegrees(int exifOrientation)
-    {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
-            return 90;
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
-            return 180;
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
-            return 270;
-        else
-            return 0;
-    }
 
-    private Bitmap rotate(Bitmap bitmap ,float degree)
-    {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        return Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
-    }
 
     private void storeCropImage(Bitmap bitmap)
     {
@@ -398,23 +342,6 @@ public class MainActivity extends AppCompatActivity  {
             e.printStackTrace();
         }
     }
-
-
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    mOpenCvCameraView.enableView();
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
-            }
-        }
-    };
 
     /*   Cloud Vision Code Starts Here     */
     public void uploadImage(Bitmap bitmap) {
@@ -696,30 +623,4 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-    public class FontGetter
-    {
-        Font getFont()
-        {
-            BaseFont baseFont = null;
-            try {
-                InputStream is = getResources().getAssets().open("fonts/malgun.ttf");
-                int size = is.available();
-                byte[] buffer = new byte[size];
-                is.read(buffer);
-                is.close();
-                baseFont = BaseFont.createFont("malgun.ttf",BaseFont.IDENTITY_H,true,false,buffer,null);
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            } catch (DocumentException e)
-            {
-                e.printStackTrace();
-            }
-
-            Font font =  new Font(baseFont , 12);
-
-            return font;
-        }
-
-    }
 }
