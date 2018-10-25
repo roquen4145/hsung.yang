@@ -294,12 +294,14 @@ public class MainActivity extends AppCompatActivity  {
                 }
                 iv_ToRead.setImageBitmap(bitmap);
 
+                storeCropImage(bitmap);
                 // 임시 파일 삭제
                 File f = new File(mImageCaptureUri.getPath());
                 if(f.exists())
                 {
                     f.delete();
                 }
+
                 uploadImage(bitmap);
 
                 break;
@@ -370,7 +372,7 @@ public class MainActivity extends AppCompatActivity  {
         return Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
     }
 
-    private void storeCropImage(Bitmap bitmap,String filePath)
+    private void storeCropImage(Bitmap bitmap)
     {
         String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/KHDD";
         File directory_KHDD = new File(dirPath);
@@ -378,7 +380,9 @@ public class MainActivity extends AppCompatActivity  {
         if(!directory_KHDD.exists())
             directory_KHDD.mkdir();
 
-        File copyFile = new File(filePath);
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).format(new Date());
+        String imageFileName =  timeStamp + ".jpg";
+        File copyFile = new File(dirPath + "/" + imageFileName);
         BufferedOutputStream out = null;
 
         try {
