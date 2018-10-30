@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ public class EditActivity extends AppCompatActivity {
     private Button btn_save;
     private Button btn_delete;
     private Button btn_next;
+    private LinearLayout ll_parapage;
 
     private String currentText;
 
@@ -66,6 +68,7 @@ public class EditActivity extends AppCompatActivity {
         btn_align_right = (Button) findViewById(R.id.RightAlignButton);
         tv_preview = (TextView) findViewById(R.id.ParagraphPreview);
         tv_text = (EditText) findViewById(R.id.ParagraphText);
+        ll_parapage = (LinearLayout) findViewById(R.id.ParaPage);
         btn_preview = (Button) findViewById(R.id.PreviousButton);
         btn_save = (Button) findViewById(R.id.SaveButton);
         btn_delete = (Button) findViewById(R.id.DeleteButton);
@@ -259,6 +262,7 @@ public class EditActivity extends AppCompatActivity {
     protected void ParaInit()
     {
         currentPara = 0;
+
         ParaRefresh();
     }
 
@@ -306,6 +310,21 @@ public class EditActivity extends AppCompatActivity {
         currentText = currentParaStruct.para_text;
         tv_text.setText(currentText);
         SetParaAlign();
+
+        for(int i=0;i<receivedAnnot.numPara;i++)
+        {
+            Button newButton = new Button(this);
+            newButton.setText(i+1);
+            final int buttonID = i;
+            newButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    currentPara = buttonID;
+                    ParaRefresh();
+                }
+            });
+            ll_parapage.addView( newButton , i );
+        }
 
     }
 

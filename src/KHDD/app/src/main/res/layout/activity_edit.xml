@@ -12,18 +12,19 @@
         android:layout_height="match_parent"
         android:background="#FFFFFF"
         android:orientation="vertical"
-        >
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="325dp">
 
         <TextView
             android:id="@+id/edit_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/tv_edit_title"
-            android:textColor="#000000"
             android:layout_margin="5dp"
             android:paddingStart="5dp"
+            android:paddingTop="5dp"
             android:paddingEnd="5dp"
-            android:paddingTop="5dp"/>
+            android:text="@string/tv_edit_title"
+            android:textColor="#000000" />
 
         <LinearLayout
             android:id="@+id/AlignmentPanel"
@@ -36,10 +37,10 @@
                 android:id="@+id/AlignmentText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tv_alignmenttext"
                 android:layout_gravity="center_vertical"
-                android:textColor="#000000"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:text="@string/tv_alignmenttext"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/LeftAlignButton"
@@ -47,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:text="@string/btn_leftalign"/>
+                android:text="@string/btn_leftalign" />
 
             <Button
                 android:id="@+id/CenterAlignButton"
@@ -55,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:text="@string/btn_centeralign"/>
+                android:text="@string/btn_centeralign" />
 
             <Button
                 android:id="@+id/RightAlignButton"
@@ -63,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:text="@string/btn_rightalign"/>
+                android:text="@string/btn_rightalign" />
 
         </LinearLayout>
 
@@ -71,14 +72,24 @@
             android:id="@+id/ParagraphPreview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000000"
-            />
+            android:textColor="#000000" />
 
         <EditText
             android:id="@+id/ParagraphText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="#000000"/>
+            android:textColor="#000000" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ParaPage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/ControlPanel">
+
 
 
     </LinearLayout>
