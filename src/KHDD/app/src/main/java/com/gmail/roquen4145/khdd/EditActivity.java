@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +44,10 @@ public class EditActivity extends AppCompatActivity {
     private Button btn_align_left;
     private Button btn_align_center;
     private Button btn_align_right ;
+    private Button btn_add_padding;
+    private Button btn_decrease_size;
+    private Button btn_increase_size;
+    private Button btn_remove_padding;
     private TextView tv_preview;
     private EditText tv_text;
     private Button btn_preview;
@@ -66,6 +71,10 @@ public class EditActivity extends AppCompatActivity {
         btn_align_left = (Button) findViewById(R.id.LeftAlignButton);
         btn_align_center = (Button) findViewById(R.id.CenterAlignButton);
         btn_align_right = (Button) findViewById(R.id.RightAlignButton);
+        btn_remove_padding = (Button) findViewById(R.id.removePadding);
+        btn_decrease_size = (Button) findViewById(R.id.decreaseSize);
+        btn_increase_size = (Button) findViewById(R.id.increaseSize);
+        btn_add_padding = (Button) findViewById(R.id.addPadding);
         tv_preview = (TextView) findViewById(R.id.ParagraphPreview);
         tv_text = (EditText) findViewById(R.id.ParagraphText);
         ll_parapage = (LinearLayout) findViewById(R.id.ParaPage);
@@ -107,6 +116,88 @@ public class EditActivity extends AppCompatActivity {
                 tv_text.setGravity(Gravity.END);
                 currentParaStruct.para_align = 3;
                 receivedAnnot.Paras.set(currentPara,currentParaStruct);
+            }
+        });
+
+        btn_remove_padding.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                int tv_gravity = tv_text.getGravity();
+
+                if(tv_gravity == Gravity.START || tv_gravity == Gravity.CENTER_HORIZONTAL)
+                {
+                    if(currentParaStruct.para_padding >0)
+                    {
+                        currentParaStruct.para_padding -= 10;
+                        receivedAnnot.Paras.set(currentPara,currentParaStruct);
+                        tv_text.setPadding(tv_text.getPaddingLeft() - 10, tv_text.getPaddingTop(),tv_text.getPaddingRight(),tv_text.getPaddingBottom());
+                    }
+                }
+                else if (tv_gravity == Gravity.END)
+                {
+                    if(currentParaStruct.para_padding >0)
+                    {
+                        currentParaStruct.para_padding -= 10;
+                        receivedAnnot.Paras.set(currentPara,currentParaStruct);
+                        tv_text.setPadding(tv_text.getPaddingLeft(), tv_text.getPaddingTop(),tv_text.getPaddingRight()-10,tv_text.getPaddingBottom());
+                    }
+                }
+
+                Toast.makeText(getApplicationContext(),"Padding : " + tv_text.getPaddingLeft() + " " + tv_text.getPaddingTop() + " " + tv_text.getPaddingRight() + " " + tv_text.getPaddingBottom() , Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btn_decrease_size.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+
+                if(currentParaStruct.para_text_size > 6)
+                {
+                    currentParaStruct.para_text_size -=2;
+                    receivedAnnot.Paras.set(currentPara,currentParaStruct);
+
+                    tv_text.setTextSize(TypedValue.COMPLEX_UNIT_SP,currentParaStruct.para_text_size + 5);
+                }
+            }
+        });
+
+        btn_increase_size.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+
+                if(currentParaStruct.para_text_size < 30)
+                {
+                    currentParaStruct.para_text_size +=2;
+                    receivedAnnot.Paras.set(currentPara,currentParaStruct);
+
+                    tv_text.setTextSize(TypedValue.COMPLEX_UNIT_SP,currentParaStruct.para_text_size + 5);
+                }
+            }
+        });
+
+        btn_add_padding.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                int tv_gravity = tv_text.getGravity();
+
+                if(tv_gravity == Gravity.START || tv_gravity == Gravity.CENTER_HORIZONTAL)
+                {
+                    currentParaStruct.para_padding += 10;
+                    receivedAnnot.Paras.set(currentPara,currentParaStruct);
+                    tv_text.setPadding(tv_text.getPaddingLeft() + 10, tv_text.getPaddingTop(),tv_text.getPaddingRight(),tv_text.getPaddingBottom());
+                }
+                else if (tv_gravity == Gravity.END)
+                {
+                    currentParaStruct.para_padding += 10;
+                    receivedAnnot.Paras.set(currentPara,currentParaStruct);
+                    tv_text.setPadding(tv_text.getPaddingLeft(), tv_text.getPaddingTop(),tv_text.getPaddingRight()+10,tv_text.getPaddingBottom());
+                }
+
+                Toast.makeText(getApplicationContext(),"Padding : " + tv_text.getPaddingLeft() + " " + tv_text.getPaddingTop() + " " + tv_text.getPaddingRight() + " " + tv_text.getPaddingBottom() , Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -285,21 +376,15 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    protected void ParaRefresh()
-    {
-        if(tv_text.getText().length()== 0)
-        {
+    protected void ParaRefresh() {
+        if (tv_text.getText().length() == 0) {
             btn_delete.setClickable(true);
-        }
-        else if (currentPara == receivedAnnot.numPara -1)
-        {
+        } else if (currentPara == receivedAnnot.numPara - 1) {
             btn_save.setVisibility(View.VISIBLE);
             btn_save.setClickable(true);
             btn_delete.setVisibility(View.GONE);
             btn_delete.setClickable(false);
-        }
-        else
-        {
+        } else {
             btn_save.setVisibility(View.GONE);
             btn_save.setClickable(false);
             btn_delete.setVisibility(View.VISIBLE);
@@ -310,11 +395,18 @@ public class EditActivity extends AppCompatActivity {
         currentText = currentParaStruct.para_text;
         tv_text.setText(currentText);
         SetParaAlign();
+        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_SP,currentParaStruct.para_text_size + 5);
+
+
+        Toast.makeText(getApplicationContext(),"Child Count : " + ll_parapage.getChildCount() , Toast.LENGTH_SHORT ).show();
+        ll_parapage.removeAllViews();
+
 
         for(int i=0;i<receivedAnnot.numPara;i++)
         {
-            Button newButton = new Button(this);
-            newButton.setText(i+1);
+            Button newButton = new Button(getApplicationContext());
+            String ButtonText = String.valueOf(i+1);
+            newButton.setText(ButtonText);
             final int buttonID = i;
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -330,7 +422,7 @@ public class EditActivity extends AppCompatActivity {
 
 
 
-    Font getFont(int fontSize)
+    Font getFont(int fontSize )
     {
         BaseFont baseFont = null;
         try {
