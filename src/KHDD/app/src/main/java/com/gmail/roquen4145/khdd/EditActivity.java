@@ -123,28 +123,13 @@ public class EditActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                int tv_gravity = tv_text.getGravity();
 
-                if(tv_gravity == Gravity.START || tv_gravity == Gravity.CENTER_HORIZONTAL)
-                {
-                    if(currentParaStruct.para_padding >0)
-                    {
-                        currentParaStruct.para_padding -= 10;
-                        receivedAnnot.Paras.set(currentPara,currentParaStruct);
-                        tv_text.setPadding(tv_text.getPaddingLeft() - 10, tv_text.getPaddingTop(),tv_text.getPaddingRight(),tv_text.getPaddingBottom());
-                    }
-                }
-                else if (tv_gravity == Gravity.END)
-                {
-                    if(currentParaStruct.para_padding >0)
-                    {
-                        currentParaStruct.para_padding -= 10;
-                        receivedAnnot.Paras.set(currentPara,currentParaStruct);
-                        tv_text.setPadding(tv_text.getPaddingLeft(), tv_text.getPaddingTop(),tv_text.getPaddingRight()-10,tv_text.getPaddingBottom());
-                    }
+                if(currentParaStruct.para_padding >0) {
+                    currentParaStruct.para_padding = currentParaStruct.para_padding - 10;
+                    receivedAnnot.Paras.set(currentPara, currentParaStruct);
                 }
 
-                Toast.makeText(getApplicationContext(),"Padding : " + tv_text.getPaddingLeft() + " " + tv_text.getPaddingTop() + " " + tv_text.getPaddingRight() + " " + tv_text.getPaddingBottom() , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"더 이상 Padding을 줄일 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -182,22 +167,11 @@ public class EditActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                int tv_gravity = tv_text.getGravity();
 
-                if(tv_gravity == Gravity.START || tv_gravity == Gravity.CENTER_HORIZONTAL)
-                {
-                    currentParaStruct.para_padding += 10;
-                    receivedAnnot.Paras.set(currentPara,currentParaStruct);
-                    tv_text.setPadding(tv_text.getPaddingLeft() + 10, tv_text.getPaddingTop(),tv_text.getPaddingRight(),tv_text.getPaddingBottom());
-                }
-                else if (tv_gravity == Gravity.END)
-                {
-                    currentParaStruct.para_padding += 10;
-                    receivedAnnot.Paras.set(currentPara,currentParaStruct);
-                    tv_text.setPadding(tv_text.getPaddingLeft(), tv_text.getPaddingTop(),tv_text.getPaddingRight()+10,tv_text.getPaddingBottom());
-                }
+                currentParaStruct.para_padding = currentParaStruct.para_padding + 10;
+                receivedAnnot.Paras.set(currentPara,currentParaStruct);
 
-                Toast.makeText(getApplicationContext(),"Padding : " + tv_text.getPaddingLeft() + " " + tv_text.getPaddingTop() + " " + tv_text.getPaddingRight() + " " + tv_text.getPaddingBottom() , Toast.LENGTH_SHORT).show();
+                ParaRefresh();
             }
         });
 
@@ -392,15 +366,22 @@ public class EditActivity extends AppCompatActivity {
         }
 
         currentParaStruct = receivedAnnot.Paras.get(currentPara);
+
         currentText = currentParaStruct.para_text;
         tv_text.setText(currentText);
         SetParaAlign();
         tv_text.setTextSize(TypedValue.COMPLEX_UNIT_SP,currentParaStruct.para_text_size + 5);
 
+        final LinearLayout.LayoutParams layoutparams = (LinearLayout.LayoutParams) tv_text.getLayoutParams();
 
-        Toast.makeText(getApplicationContext(),"Child Count : " + ll_parapage.getChildCount() , Toast.LENGTH_SHORT ).show();
+        if(currentParaStruct.para_align <3)
+            layoutparams.setMargins(currentParaStruct.para_padding,0,0,0);
+        else
+            layoutparams.setMargins(0,0, currentParaStruct.para_padding,0);
+
+        tv_text.setLayoutParams(layoutparams);
+
         ll_parapage.removeAllViews();
-
 
         for(int i=0;i<receivedAnnot.numPara;i++)
         {

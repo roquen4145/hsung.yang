@@ -511,8 +511,14 @@ public class MainActivity extends AppCompatActivity  {
         StringBuilder message = new StringBuilder();
         TextAnnotation annotation = response.getResponses().get(0).getFullTextAnnotation();
 
+        int page_width = 0;
+
+        savedAnnot.numPara =0;
+        savedAnnot.Paras.clear();
+
         for (Page page : annotation.getPages())
         {
+            page_width = page.getWidth();
             String pageText = "";
             for (Block block : page.getBlocks())
             {
@@ -539,11 +545,22 @@ public class MainActivity extends AppCompatActivity  {
                     blockText = blockText + paraText;
 
                     ParaStruct temp = new ParaStruct();
-                    temp.para_align = 1;
                     temp.para_padding = 0;
-                    temp.para_pos_x = para.getBoundingBox().getVertices().get(0).getX();
+                    temp.para_pos_x1 = para.getBoundingBox().getVertices().get(0).getX();
+                    temp.para_pos_x2 = para.getBoundingBox().getVertices().get(2).getX();
                     temp.para_text = paraText;
                     temp.para_text_size = 10;
+                    temp.para_width = page_width;
+
+                    if ( Math.abs(temp.para_width/2 - (temp.para_pos_x1 + temp.para_pos_x2)/2) <= temp.para_width/20)
+                        temp.para_align = 2;
+                    else
+                    {
+                        if(temp.para_width/2 - (temp.para_pos_x1 + temp.para_pos_x2)/2 > 0)
+                            temp.para_align = 1;
+                        else
+                            temp.para_align = 3;
+                    }
 
                     savedAnnot.Paras.add(temp);
 
