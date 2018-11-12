@@ -37,6 +37,20 @@
             android:textColor="#000000"
             android:textSize="15sp" />
 
+        <ScrollView
+            android:id="@+id/pdfScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+            <LinearLayout
+                android:id="@+id/pdfList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </ScrollView>
+
         <ImageView
             android:id="@+id/imgToRead"
             android:layout_width="match_parent"

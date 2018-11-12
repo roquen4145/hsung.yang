@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -31,11 +32,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,6 +87,7 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -110,6 +118,9 @@ public class MainActivity extends AppCompatActivity  {
     private Button btn_Copy;
     private Button btn_PDF;
     private String savePath;
+    private ScrollView pdfScroll;
+    private File pdfFolder;
+    private LinearLayout pdfListView;
 
     static AnnotClass savedAnnot;
 
@@ -139,6 +150,8 @@ public class MainActivity extends AppCompatActivity  {
         iv_Prep = (ImageView)findViewById(R.id.imgPrep);
         btn_Copy = (Button)findViewById(R.id.btn_copy);
         btn_PDF = (Button)findViewById(R.id.btn_pdf);
+        pdfScroll = (ScrollView) findViewById(R.id.pdfScroll);
+        pdfListView = (LinearLayout) findViewById(R.id.pdfList);
 
 
         savedAnnot = new AnnotClass();
@@ -158,6 +171,7 @@ public class MainActivity extends AppCompatActivity  {
 
                 btn_Copy.setVisibility(View.VISIBLE);
                 btn_PDF.setVisibility(View.VISIBLE);
+                pdfScroll.setVisibility(View.GONE);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder
@@ -207,6 +221,36 @@ public class MainActivity extends AppCompatActivity  {
                 startActivity(intent);
             }
         });
+
+        String Dirname = Environment.getExternalStorageDirectory().getAbsolutePath()+"/KHDD";
+        pdfFolder = new File(Dirname);
+        final File fileList[] = pdfFolder.listFiles();
+
+        pdfListView.removeAllViews();
+
+        for(int i=0;i<fileList.length;i++)
+        {
+            final int index = i;
+            TextView temp_TextView = new TextView(getApplicationContext());
+            temp_TextView.setText(fileList[i].getName());
+            temp_TextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20);
+//            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) temp_TextView.getLayoutParams();
+//            lp.setMargins(25,25,25,25);
+//            temp_TextView.setLayoutParams(lp);
+            temp_TextView.setTextColor(Color.parseColor("#000000"));
+            temp_TextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setDataAndType(Uri.fromFile(fileList[index]),"application/pdf");
+                    startActivity(intent);
+                }
+            });
+
+            pdfListView.addView(temp_TextView,i);
+        }
+
+
     }
 
     public void startGalleryChooser(){
