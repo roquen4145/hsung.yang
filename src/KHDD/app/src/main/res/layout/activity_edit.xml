@@ -71,30 +71,68 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id = "@+id/paraStylePanel"
+            android:id="@+id/paraStylePanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal">
 
+            <TextView
+                android:id="@+id/TextSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:layout_marginEnd ="50dp"
+                android:layout_marginTop = "10dp"/>
+
             <Button
                 android:id="@+id/removePadding"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/left_arrow"
+                android:backgroundTint="@android:color/background_dark"
+                android:minWidth="20dp"
+                android:minHeight="20dp" />
 
             <Button
                 android:id="@+id/decreaseSize"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/reduce"
+                android:backgroundTint="@android:color/background_dark"
+                android:minWidth="20dp"
+                android:minHeight="20dp" />
 
             <Button
                 android:id="@+id/increaseSize"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/enlarge"
+                android:backgroundTint="@android:color/background_dark"
+                android:minWidth="20dp"
+                android:minHeight="20dp" />
 
             <Button
                 android:id="@+id/addPadding"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/right_arrow"
+                android:backgroundTint="@android:color/background_dark"
+                android:minWidth="20dp"
+                android:minHeight="20dp" />
+
+            <TextView
+                android:id="@+id/Padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:layout_marginStart = "50dp"
+                android:layout_marginTop = "10dp"/>
+
 
         </LinearLayout>
 
@@ -113,18 +151,25 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ParaPage"
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/ControlPanel"
-        android:scrollbars="horizontal">
+        app:layout_constraintBottom_toTopOf="@+id/ControlPanel">
+
+        <LinearLayout
+            android:id="@+id/ParaPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:scrollbars="horizontal">
 
 
+        </LinearLayout>
+    </HorizontalScrollView>
 
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ControlPanel"

@@ -44,10 +44,12 @@ public class EditActivity extends AppCompatActivity {
     private Button btn_align_left;
     private Button btn_align_center;
     private Button btn_align_right ;
+    private TextView tv_text_size;
     private Button btn_add_padding;
     private Button btn_decrease_size;
     private Button btn_increase_size;
     private Button btn_remove_padding;
+    private TextView tv_padding;
     private TextView tv_preview;
     private EditText tv_text;
     private Button btn_preview;
@@ -71,10 +73,12 @@ public class EditActivity extends AppCompatActivity {
         btn_align_left = (Button) findViewById(R.id.LeftAlignButton);
         btn_align_center = (Button) findViewById(R.id.CenterAlignButton);
         btn_align_right = (Button) findViewById(R.id.RightAlignButton);
+        tv_text_size = (TextView) findViewById(R.id.TextSize);
         btn_remove_padding = (Button) findViewById(R.id.removePadding);
         btn_decrease_size = (Button) findViewById(R.id.decreaseSize);
         btn_increase_size = (Button) findViewById(R.id.increaseSize);
         btn_add_padding = (Button) findViewById(R.id.addPadding);
+        tv_padding = (TextView) findViewById(R.id.Padding);
         tv_preview = (TextView) findViewById(R.id.ParagraphPreview);
         tv_text = (EditText) findViewById(R.id.ParagraphText);
         ll_parapage = (LinearLayout) findViewById(R.id.ParaPage);
@@ -127,9 +131,10 @@ public class EditActivity extends AppCompatActivity {
                 if(currentParaStruct.para_padding >0) {
                     currentParaStruct.para_padding = currentParaStruct.para_padding - 10;
                     receivedAnnot.Paras.set(currentPara, currentParaStruct);
+                    ParaRefresh();
                 }
-
-                Toast.makeText(getApplicationContext(),"더 이상 Padding을 줄일 수 없습니다.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getApplicationContext(),"더 이상 Padding을 줄일 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -398,6 +403,9 @@ public class EditActivity extends AppCompatActivity {
             });
             ll_parapage.addView( newButton , i );
         }
+
+        tv_text_size.setText(currentParaStruct.para_text_size);
+        tv_padding.setText(currentParaStruct.para_padding);
 
     }
 

@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity  {
     public static final int CAMERA_PERMISSIONS_REQUEST = 2;
     public static final int CAMERA_IMAGE_REQUEST = 3;
     public static final int CROP_FROM_IMAGE = 4;
+    private static int MAIN_MODE = 0;
 
     private static final String TAG = "opencv";
     private CameraBridgeViewBase mOpenCvCameraView;
