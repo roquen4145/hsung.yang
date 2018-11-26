@@ -20,4 +20,5 @@
     <string name="btn_rightalign">오른쪽</string>
     <string name="btn_save">저장</string>
     <string name="btn_delete">삭제</string>
+    <string name="pdfListString">PDF 파일 목록</string>
 </resources>

@@ -1,8 +1,10 @@
 package com.gmail.roquen4145.khdd;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -39,6 +41,9 @@ public class EditActivity extends AppCompatActivity {
     private static final int ALIGN_CENTER = 2;
     private static final int ALIGN_RIGHT = 3;
 
+    private static final int MAX_SYMBOL_SIZE = 50;
+    private static final int MIN_SYMBOL_SIZE = 8;
+
     private Integer currentPara;
 
     private Button btn_align_left;
@@ -62,8 +67,6 @@ public class EditActivity extends AppCompatActivity {
 
     private AnnotClass receivedAnnot;
     private ParaStruct currentParaStruct;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,13 +146,17 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(currentParaStruct.para_text_size > 6)
+                if(currentParaStruct.para_text_size >  MIN_SYMBOL_SIZE)
                 {
                     currentParaStruct.para_text_size -=2;
                     receivedAnnot.Paras.set(currentPara,currentParaStruct);
 
                     tv_text.setTextSize(TypedValue.COMPLEX_UNIT_SP,currentParaStruct.para_text_size + 5);
+
+                    ParaRefresh();
                 }
+                else
+                    Toast.makeText(getApplicationContext(),"글자 크기가 너무 작습니다",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -158,13 +165,17 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(currentParaStruct.para_text_size < 30)
+                if(currentParaStruct.para_text_size < MAX_SYMBOL_SIZE)
                 {
                     currentParaStruct.para_text_size +=2;
                     receivedAnnot.Paras.set(currentPara,currentParaStruct);
 
                     tv_text.setTextSize(TypedValue.COMPLEX_UNIT_SP,currentParaStruct.para_text_size + 5);
+
+                    ParaRefresh();
                 }
+                else
+                    Toast.makeText(getApplicationContext(),"글자 크기가 너무 큽니다",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -217,55 +228,78 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Document document = new Document(PageSize.A4, 50, 50, 30, 40);
-                String Dirname = Environment.getExternalStorageDirectory().getAbsolutePath()+"/KHDD";
-                String filename = "TempPDFFile";
-                String fullname = Dirname + "/" +filename + ".pdf";
-                File pdfFile = new File(fullname);
+                AlertDialog.Builder ad = new AlertDialog.Builder(EditActivity.this);
+                ad.setTitle("PDF 파일 이름");
+                ad.setMessage("파일 이름을 입력하세요");
 
-                try {
-                    PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                final EditText et = new EditText(EditActivity.this);
+                ad.setView(et);
 
-                document.open();
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                for(int i=0;i<receivedAnnot.numPara;i++)
-                {
-                    ParaStruct temp = receivedAnnot.Paras.get(i);
-                    Font myFont = getFont(temp.para_text_size);
-                    Paragraph paragraph = new Paragraph(temp.para_text , myFont);
-                    switch(temp.para_align)
-                    {
-                        case ALIGN_LEFT:
-                            paragraph.setAlignment(Element.ALIGN_LEFT);
-                            break;
-                        case ALIGN_CENTER:
-                            paragraph.setAlignment(Element.ALIGN_CENTER);
-                            break;
-                        case ALIGN_RIGHT:
-                            paragraph.setAlignment(Element.ALIGN_RIGHT);
-                            break;
+                        Document document = new Document(PageSize.A4, 50, 50, 30, 40);
+                        String Dirname = Environment.getExternalStorageDirectory().getAbsolutePath()+"/KHDD";
+                        String value = et.getText().toString();
+                        String fullname = Dirname + "/" +value + ".pdf";
+
+                        File pdfFile = new File(fullname);
+
+                        try {
+                            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                        document.open();
+
+                        for(int i=0;i<receivedAnnot.numPara;i++)
+                        {
+                            ParaStruct temp = receivedAnnot.Paras.get(i);
+                            Font myFont = getFont(temp.para_text_size);
+                            Paragraph paragraph = new Paragraph(temp.para_text , myFont);
+                            switch(temp.para_align)
+                            {
+                                case ALIGN_LEFT:
+                                    paragraph.setAlignment(Element.ALIGN_LEFT);
+                                    break;
+                                case ALIGN_CENTER:
+                                    paragraph.setAlignment(Element.ALIGN_CENTER);
+                                    break;
+                                case ALIGN_RIGHT:
+                                    paragraph.setAlignment(Element.ALIGN_RIGHT);
+                                    break;
+                            }
+
+                            paragraph.setIndentationLeft(temp.para_padding);
+
+                            try {
+                                document.add(paragraph);
+                            } catch (DocumentException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        document.close();
+
+                        String msg = "문서를 " + value + ".pdf로 저장하였습니다.";
+                        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile((pdfFile))));
+                        finish();
                     }
+                });
 
-                    paragraph.setIndentationLeft(temp.para_padding);
-
-                    try {
-                        document.add(paragraph);
-                    } catch (DocumentException e) {
-                        e.printStackTrace();
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                     }
-                }
+                });
 
-                document.close();
-
-                String msg = "문서를 " + filename + ".pdf로 저장하였습니다.";
-                Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile((pdfFile))));
-                finish();
+                ad.show();
             }
         });
 
@@ -332,9 +366,30 @@ public class EditActivity extends AppCompatActivity {
     protected void ParaInit()
     {
         currentPara = 0;
-
+        SetSymbolSize();
         ParaRefresh();
     }
+
+    protected void SetSymbolSize()
+    {
+        int min = 100;
+        for(int i=0;i<receivedAnnot.numPara;i++)
+        {
+            if(min > receivedAnnot.Paras.get(i).para_text_size)
+                min = receivedAnnot.Paras.get(i).para_text_size;
+        }
+
+        if(min > 30)
+        {
+            for(int i=0;i<receivedAnnot.numPara;i++)
+            {
+                ParaStruct temp = receivedAnnot.Paras.get(i);
+                temp.para_text_size = temp.para_text_size / 2;
+                receivedAnnot.Paras.set(i,temp);
+            }
+        }
+    }
+
 
     protected void SetParaAlign()
     {
@@ -404,8 +459,8 @@ public class EditActivity extends AppCompatActivity {
             ll_parapage.addView( newButton , i );
         }
 
-        tv_text_size.setText(currentParaStruct.para_text_size);
-        tv_padding.setText(currentParaStruct.para_padding);
+        tv_text_size.setText(String.valueOf(currentParaStruct.para_text_size));
+        tv_padding.setText(String.valueOf(currentParaStruct.para_padding));
 
     }
 

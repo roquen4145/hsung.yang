@@ -80,15 +80,19 @@ import com.google.api.services.vision.v1.model.Word;
 import java.io.ByteArrayOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static java.lang.Math.abs;
 
 
 public class MainActivity extends AppCompatActivity  {
@@ -117,6 +121,7 @@ public class MainActivity extends AppCompatActivity  {
     private TextView tv_ImageDescription;
     private Button btn_Copy;
     private Button btn_PDF;
+    private FloatingActionButton btn_Home;
     private String savePath;
     private ScrollView pdfScroll;
     private File pdfFolder;
@@ -150,6 +155,7 @@ public class MainActivity extends AppCompatActivity  {
         iv_Prep = (ImageView)findViewById(R.id.imgPrep);
         btn_Copy = (Button)findViewById(R.id.btn_copy);
         btn_PDF = (Button)findViewById(R.id.btn_pdf);
+        btn_Home = (FloatingActionButton)findViewById(R.id.btn_home);
         pdfScroll = (ScrollView) findViewById(R.id.pdfScroll);
         pdfListView = (LinearLayout) findViewById(R.id.pdfList);
 
@@ -171,6 +177,7 @@ public class MainActivity extends AppCompatActivity  {
 
                 btn_Copy.setVisibility(View.VISIBLE);
                 btn_PDF.setVisibility(View.VISIBLE);
+                btn_Home.setVisibility(View.VISIBLE);
                 pdfScroll.setVisibility(View.GONE);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -189,6 +196,7 @@ public class MainActivity extends AppCompatActivity  {
                                 startCamera();
                             }
                         });
+                savedAnnot = new AnnotClass();
                 builder.create().show();
             }
         });
@@ -222,6 +230,30 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+
+        btn_Home.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                btn_Copy.setVisibility(View.GONE);
+                btn_PDF.setVisibility(View.GONE);
+                btn_Home.setVisibility(View.GONE);
+                pdfScroll.setVisibility(View.VISIBLE);
+
+                iv_ToRead.setImageBitmap(null);
+                tv_ImageDescription.setText("");
+                tv_command.setText(R.string.command);
+                resetPDFList();
+            }
+        });
+
+
+        resetPDFList();
+
+    }
+
+    public void resetPDFList()
+    {
         String Dirname = Environment.getExternalStorageDirectory().getAbsolutePath()+"/KHDD";
         pdfFolder = new File(Dirname);
         final File fileList[] = pdfFolder.listFiles();
@@ -232,25 +264,27 @@ public class MainActivity extends AppCompatActivity  {
         {
             final int index = i;
             TextView temp_TextView = new TextView(getApplicationContext());
-            temp_TextView.setText(fileList[i].getName());
-            temp_TextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20);
-//            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) temp_TextView.getLayoutParams();
-//            lp.setMargins(25,25,25,25);
-//            temp_TextView.setLayoutParams(lp);
-            temp_TextView.setTextColor(Color.parseColor("#000000"));
-            temp_TextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setDataAndType(Uri.fromFile(fileList[index]),"application/pdf");
-                    startActivity(intent);
-                }
-            });
+            String temp_fileName = fileList[i].getName();
+            if(temp_fileName.endsWith("pdf"))
+            {
+                temp_TextView.setText(temp_fileName);
+                temp_TextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20);
+                LinearLayout.LayoutParams lp =  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);//(LinearLayout.LayoutParams) temp_TextView.getLayoutParams();
+                lp.setMargins(25,25,25,25);
+                temp_TextView.setLayoutParams(lp);
+                temp_TextView.setTextColor(Color.parseColor("#000000"));
+                temp_TextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setDataAndType(Uri.fromFile(fileList[index]),"application/pdf");
+                        startActivity(intent);
+                    }
+                });
+                pdfListView.addView(temp_TextView);
+            }
 
-            pdfListView.addView(temp_TextView,i);
         }
-
-
     }
 
     public void startGalleryChooser(){
@@ -267,6 +301,7 @@ public class MainActivity extends AppCompatActivity  {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
+                ImageFilePath = photoFile.getAbsolutePath();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -292,9 +327,31 @@ public class MainActivity extends AppCompatActivity  {
                 ".jpg",
                 storageDir
         );
-        ImageFilePath = image.getAbsolutePath();
         return image;
     }
+
+    private static void filecopy(String from, String to) throws Exception{
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        FileChannel in = null;
+        FileChannel out = null;
+        try{
+            fis = new FileInputStream(from);
+            fos = new FileOutputStream(to);
+            in = fis.getChannel();
+            out = fos.getChannel();
+            in.transferTo(0, in.size(), out);
+        } catch(Exception e){ e.printStackTrace(); }
+
+        finally {
+            if(out != null) out.close();
+            if(in != null) in.close();
+            if(fis != null) fis.close();
+            if(fos != null) fos.close();
+        }
+    }
+
+
 
 
     @Override
@@ -318,7 +375,7 @@ public class MainActivity extends AppCompatActivity  {
                 iv_ToRead.setImageBitmap(bitmap);
 
                 storeCropImage(bitmap);
-                // 임시 파일 삭제
+
                 File f = new File(mImageCaptureUri.getPath());
                 if(f.exists())
                 {
@@ -332,6 +389,16 @@ public class MainActivity extends AppCompatActivity  {
             {
                 mImageCaptureUri = data.getData();
                 ImageFilePath = getRealPathFromURI(mImageCaptureUri);
+                try {
+                    File copied = createImageFile();
+                    filecopy(ImageFilePath,copied.getAbsolutePath());
+                    mImageCaptureUri = FileProvider.getUriForFile(this,getPackageName(),copied);
+                    ImageFilePath = copied.getAbsolutePath();
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
             case CAMERA_IMAGE_REQUEST:
             {
@@ -557,7 +624,9 @@ public class MainActivity extends AppCompatActivity  {
         TextAnnotation annotation = response.getResponses().get(0).getFullTextAnnotation();
 
         int page_width = 0;
-
+        if(annotation == null) {
+            return "";
+        }
         savedAnnot.numPara =0;
         savedAnnot.Paras.clear();
 
@@ -571,6 +640,8 @@ public class MainActivity extends AppCompatActivity  {
                 for (Paragraph para : block.getParagraphs())
                 {
                     savedAnnot.numPara+=1;
+                    ParaStruct temp = new ParaStruct();
+                    temp.para_text_size = 0;
 
                     String paraText = "";
                     for(Word word: para.getWords())
@@ -581,6 +652,16 @@ public class MainActivity extends AppCompatActivity  {
                         {
                             wordText = wordText + symbol.getText();
                             //message.append( symbol.getText() +" ");
+                            try {
+                                int symbol_size = abs(symbol.getBoundingBox().getVertices().get(0).getY() - symbol.getBoundingBox().getVertices().get(2).getY());
+                                if (temp.para_text_size < symbol_size)
+                                    temp.para_text_size = symbol_size;
+                            }
+                            catch(Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+
                         }
                         //message.append("\n");
                         //message.append("Word text : "+ wordText + "  \n\n");
@@ -589,15 +670,24 @@ public class MainActivity extends AppCompatActivity  {
                     //message.append("\nParagraph: \n" + paraText + "\n\n\n");
                     blockText = blockText + paraText;
 
-                    ParaStruct temp = new ParaStruct();
+
+
                     temp.para_padding = 0;
-                    temp.para_pos_x1 = para.getBoundingBox().getVertices().get(0).getX();
-                    temp.para_pos_x2 = para.getBoundingBox().getVertices().get(2).getX();
+                    try
+                    {
+                        temp.para_pos_x1 = para.getBoundingBox().getVertices().get(0).getX();
+                        temp.para_pos_x2 = para.getBoundingBox().getVertices().get(2).getX();
+                    }
+                    catch (NullPointerException e)
+                    {
+                        continue;
+                    }
+
                     temp.para_text = paraText;
-                    temp.para_text_size = 10;
+
                     temp.para_width = page_width;
 
-                    if ( Math.abs(temp.para_width/2 - (temp.para_pos_x1 + temp.para_pos_x2)/2) <= temp.para_width/20)
+                    if ( abs(temp.para_width/2 - (temp.para_pos_x1 + temp.para_pos_x2)/2) <= temp.para_width/20)
                         temp.para_align = 2;
                     else
                     {
